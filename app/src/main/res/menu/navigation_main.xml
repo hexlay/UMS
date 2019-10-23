@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_scores"
+        android:icon="@drawable/ic_sc_subjects"
+        android:title="ქულები" />
+
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/ic_ls_subjects"
+        android:title="ცხრილი" />
+
+    <item
+        android:id="@+id/nav_subjects"
+        android:icon="@drawable/ic_profile"
+        android:title="პროფილი" />
+
+</menu>

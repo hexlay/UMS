@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F44336</color>
+    <color name="colorPrimaryDark">#D32F2F</color>
+    <color name="colorAccent">#F44336</color>
+    <color name="colorPrimaryLighter">#D2E3FC</color>
+    <color name="background">#FFFFFF</color>
+    <color name="blackTransparent60">#99000000</color>
+    <!-- Transparents -->
+    <color name="transparent95">#F2FFFFFF</color>
+    <color name="transparent85">#D9FFFFFF</color>
+    <color name="transparent50">#80FFFFFF</color>
+    <!-- More... -->
+    <color name="overlayStarter">#D9000000</color>
+    <color name="overlayCenter">#A6000000</color>
+    <color name="notSoBlack">#424242</color>
+</resources>
