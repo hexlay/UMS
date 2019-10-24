@@ -9,10 +9,7 @@ import org.acra.sender.ReportSender
 import org.jetbrains.anko.toast
 import java.lang.ref.WeakReference
 import java.util.*
-import javax.mail.Message
-import javax.mail.MessagingException
-import javax.mail.PasswordAuthentication
-import javax.mail.Session
+import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
@@ -57,7 +54,7 @@ class EmailSender : ReportSender {
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("h3xlay@gmail.com"))
                     message.subject = contextReference.get()!!.getString(R.string.crash_email_subject)
                     message.setContent(crashContent, "text/html; charset=utf-8")
-                    //Transport.send(message)
+                    Transport.send(message)
                 } catch (e: MessagingException) {
                     contextReference.get()!!.toast("Error sending email")
                 }

@@ -2,6 +2,8 @@
 
     <!-- Main -->
     <string name="app_name">UMS</string>
+    <string name="yes">კი</string>
+    <string name="no">არა</string>
 
     <!-- Crash Reports -->
     <string name="crash_toast_text">Application has reduced to atoms, bugs are inevitable :(\nEmail has already been sent to developer and fix is probably in work ^^</string>
@@ -17,6 +19,7 @@
 
     <!-- Profile -->
     <string name="profile_logout">გამოსვლა</string>
+    <string name="profile_logout_prompt">ნამდვილად გსურთ გასვლა?</string>
     <string name="profile_edit">პაროლის შეცვლა</string>
     <string name="profile_semester_header">ყველა სემესტრი</string>
 

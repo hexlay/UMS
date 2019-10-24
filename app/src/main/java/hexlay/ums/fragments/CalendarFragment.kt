@@ -1,11 +1,13 @@
 package hexlay.ums.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kizitonwose.calendarview.model.CalendarDay
@@ -14,12 +16,15 @@ import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import hexlay.ums.R
+import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.CalendarSubjectAdapter
 import hexlay.ums.helpers.*
-import hexlay.ums.models.subject.Subject
+import hexlay.ums.models.session.Session
 import hexlay.ums.views.DayViewContainer
 import hexlay.ums.views.MonthViewContainer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
@@ -32,8 +37,7 @@ class CalendarFragment : Fragment() {
 
     private lateinit var reference: WeakReference<MainActivity>
     private lateinit var calendarSubjectAdapter: CalendarSubjectAdapter
-
-    private val subjects = mutableListOf<Subject>()
+    private lateinit var savedSessions: List<Session>
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
@@ -46,12 +50,10 @@ class CalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reference = WeakReference(activity as MainActivity)
-        calendarSubjectAdapter = CalendarSubjectAdapter(this)
+        calendarSubjectAdapter = CalendarSubjectAdapter()
         val topMargin = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(5)
         calendar_view.setMargins(top = topMargin)
-        setContainers()
-        setupCalendar()
-        setupRecyclerView()
+        initSessions()
     }
 
     private fun setupRecyclerView() {
@@ -92,8 +94,10 @@ class CalendarFragment : Fragment() {
                             container.dotView.makeInVisible()
                         }
                         else -> {
+                            val currentSubjects = savedSessions.filter { it.dayOfWeek == day.date.dayOfWeek.value }.toList()
                             container.dayText.setTextColorRes(android.R.color.black)
                             container.dayText.background = null
+                            container.dotView.isVisible = currentSubjects.isNotEmpty()
                         }
                     }
                 } else {
@@ -123,6 +127,18 @@ class CalendarFragment : Fragment() {
             oldDate?.let { calendar_view.notifyDateChanged(it) }
             calendar_view.notifyDateChanged(date)
             selected_date.text = selectionFormatter.format(date)
+            val currentSubjects = savedSessions.filter { it.dayOfWeek == date.dayOfWeek.value }.toList()
+            calendarSubjectAdapter.changeSubjects(currentSubjects)
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun initSessions() {
+        (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
+            savedSessions = it
+            setContainers()
+            setupCalendar()
+            setupRecyclerView()
         }
     }
 

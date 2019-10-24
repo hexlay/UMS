@@ -3,6 +3,7 @@ package hexlay.ums.activites
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import hexlay.ums.R
@@ -11,12 +12,15 @@ import hexlay.ums.fragments.CalendarFragment
 import hexlay.ums.fragments.ProfileFragment
 import hexlay.ums.fragments.ScoreFragment
 import hexlay.ums.helpers.AppHelper
+import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.setSize
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var appHelper: AppHelper
+        private set
+    lateinit var preferenceHelper: PreferenceHelper
         private set
     private lateinit var scoreFragment: ScoreFragment
     private lateinit var calendarFragment: CalendarFragment
@@ -30,9 +34,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun init() {
         appHelper = AppHelper(this)
+        preferenceHelper = PreferenceHelper(baseContext)
         initToolbar()
         setupNavigationView()
         appHelper.makeFullscreen()
+        initDarkMode()
+    }
+
+
+
+    fun initDarkMode() {
+        when(preferenceHelper.darkMode) {
+            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+        delegate.applyDayNight()
     }
 
     private fun setupViewPager() {

@@ -16,6 +16,14 @@ class PreferenceHelper(context: Context) {
             }
         }
 
+    var darkMode: Int
+        get() = settings.getInt("ums_dark_mode", 1)
+        set(value) {
+            settings.edit {
+                putInt("ums_dark_mode", value)
+            }
+        }
+
     fun clear() {
         settings.edit {
             clear()

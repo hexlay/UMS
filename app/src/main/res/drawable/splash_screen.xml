@@ -6,8 +6,6 @@
 
     <item
         android:drawable="@drawable/sangu_logo"
-        android:gravity="center"
-        android:width="250dp"
-        android:height="200dp" />
+        android:gravity="center" />
 
 </layer-list>

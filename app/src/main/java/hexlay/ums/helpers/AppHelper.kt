@@ -53,8 +53,14 @@ class AppHelper(activity: Activity) {
 
     companion object {
 
+        val isPie: Boolean
+            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+
         val isOreo: Boolean
             get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
+        val isNougat: Boolean
+            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
     }
 

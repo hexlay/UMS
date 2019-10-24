@@ -1,8 +1,8 @@
 package hexlay.ums.api
 
 import hexlay.ums.models.Profile
-import hexlay.ums.models.Session
 import hexlay.ums.models.StudentTotals
+import hexlay.ums.models.session.Session
 import hexlay.ums.models.subject.Subject
 import io.reactivex.Observable
 import retrofit2.Response

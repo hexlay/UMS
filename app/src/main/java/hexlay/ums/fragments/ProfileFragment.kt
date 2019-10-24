@@ -83,12 +83,18 @@ class ProfileFragment : Fragment() {
             }
         }
         logout.setOnClickListener {
-            (reference.get()!!.application as UMS).umsAPI.logout().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
-                if (profile != null && profile.exists()) {
-                    profile.delete()
+            MaterialDialog(context!!).show {
+                message(R.string.profile_logout_prompt)
+                positiveButton(R.string.yes) {
+                    (reference.get()!!.application as UMS).umsAPI.logout().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
+                        if (profile != null && profile.exists()) {
+                            profile.delete()
+                        }
+                        PreferenceHelper(context!!).clear()
+                        reference.get()!!.exitMainActivity()
+                    }
                 }
-                PreferenceHelper(context!!).clear()
-                reference.get()!!.exitMainActivity()
+                negativeButton(R.string.no) {}
             }
         }
         edit_profile.setOnClickListener {
