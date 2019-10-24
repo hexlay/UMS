@@ -32,14 +32,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="#EEEEEE"
+                android:background="@color/backgroundCalendar"
                 android:fontFamily="sans-serif-medium"
                 android:paddingStart="20dp"
                 android:paddingTop="12dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="12dp"
                 android:textAllCaps="true"
-                android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -48,6 +47,18 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/calendar_dnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dnd"
+                android:visibility="gone"
+                android:textSize="17sp"
+                android:drawablePadding="5dp"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:drawableStart="@drawable/ic_dnd"/>
 
         </LinearLayout>
 

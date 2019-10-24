@@ -38,12 +38,12 @@ class MainActivity : AppCompatActivity() {
         initToolbar()
         setupNavigationView()
         appHelper.makeFullscreen()
-        initDarkMode()
+        initAppTheme()
     }
 
 
 
-    fun initDarkMode() {
+    fun initAppTheme() {
         when(preferenceHelper.darkMode) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(calendarFragment)
         adapter.addFragment(profileFragment)
         view_pager.adapter = adapter
-        view_pager.offscreenPageLimit = 3
+        view_pager.offscreenPageLimit = 4
         view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
             }
@@ -77,6 +77,10 @@ class MainActivity : AppCompatActivity() {
                         navigation.selectedItemId = R.id.nav_subjects
                         toolbar_overlay.isVisible = false
                     }
+                    3 -> {
+                        navigation.selectedItemId = R.id.nav_subjects
+                        toolbar_overlay.isVisible = false
+                    }
                 }
             }
 
@@ -92,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_scores -> view_pager.currentItem = 0
                 R.id.nav_calendar -> view_pager.currentItem = 1
                 R.id.nav_subjects -> view_pager.currentItem = 2
+                R.id.nav_notifications -> view_pager.currentItem = 3
             }
             true
         }

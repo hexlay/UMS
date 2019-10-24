@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -129,6 +130,13 @@ class CalendarFragment : Fragment() {
             selected_date.text = selectionFormatter.format(date)
             val currentSubjects = savedSessions.filter { it.dayOfWeek == date.dayOfWeek.value }.toList()
             calendarSubjectAdapter.changeSubjects(currentSubjects)
+            if (currentSubjects.isEmpty()) {
+                calendar_dnd.isGone = false
+                subject_view.isGone = true
+            } else {
+                calendar_dnd.isGone = true
+                subject_view.isGone = false
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.dbflow5.query.result
 import com.dbflow5.query.select
 import com.dbflow5.structure.delete
@@ -113,6 +114,16 @@ class ProfileFragment : Fragment() {
                         //TODO: Api Change Password
                         dialog.dismiss()
                     }
+                }
+            }
+        }
+        dark_mode.setOnClickListener {
+            val darkModeItems = listOf("Bring the light", "Fall in the darkness", "Follow system")
+            MaterialDialog(context!!).show {
+                title(R.string.profile_change_theme_title)
+                listItemsSingleChoice(items = darkModeItems, initialSelection = reference.get()!!.preferenceHelper.darkMode) { _, index, _ ->
+                    reference.get()!!.preferenceHelper.darkMode = index
+                    reference.get()!!.initAppTheme()
                 }
             }
         }

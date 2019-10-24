@@ -3,8 +3,11 @@
     <color name="colorPrimary">#F44336</color>
     <color name="colorPrimaryDark">#D32F2F</color>
     <color name="colorAccent">#F44336</color>
-    <color name="colorPrimaryLighter">#D2E3FC</color>
+    <color name="colorPrimaryLighter">#E57373</color>
     <color name="background">#212121</color>
+    <color name="dnd">#F2FFFFFF</color>
+    <color name="backgroundCalendar">#424242</color>
+    <color name="blackTransparent60">#99000000</color>
     <!-- Transparents -->
     <color name="transparent95">#CC000000</color>
     <color name="transparent85">#B3000000</color>
