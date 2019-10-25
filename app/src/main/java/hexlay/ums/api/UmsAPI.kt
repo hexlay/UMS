@@ -23,7 +23,7 @@ interface UmsAPI {
     @GET("subject/student/list")
     fun getTotalStudentSubjects(): Observable<List<Subject>>
 
-    @GET("subject/student/list")
+    @GET("subject/totals")
     fun getStudentTotals(): Observable<StudentTotals>
 
     @GET("session/student/list")
@@ -37,6 +37,13 @@ interface UmsAPI {
         @Field("password")
         password: String
     ): Observable<Profile>
+
+    @POST("auth/password/change")
+    @FormUrlEncoded
+    fun passwordChange(
+        @Field("password")
+        password: String
+    ): Observable<Response<Void>>
 
     @POST("auth/logout")
     fun logout(): Observable<Response<Void>>

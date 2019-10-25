@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class SubjectGrade(
     @SerializedName("absolute")
-    var gradeMax: Int,
+    var gradeMax: Double,
     @SerializedName("relative")
-    var gradeValue: Int
+    var gradeValue: Double
 ) : Parcelable

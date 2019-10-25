@@ -11,9 +11,9 @@ data class SubjectDetail(
     @SerializedName("type")
     var detailType: String,
     @SerializedName("minValue")
-    var detailMinScore: Int,
+    var detailMinScore: Double,
     @SerializedName("absolute")
-    var detailMaxScore: Int,
+    var detailMaxScore: Double,
     @SerializedName("grade")
     var detailGrade: SubjectGrade
 ) : Parcelable

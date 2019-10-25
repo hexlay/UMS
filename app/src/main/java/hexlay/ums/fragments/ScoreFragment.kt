@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import hexlay.ums.R
@@ -36,11 +37,14 @@ class ScoreFragment : Fragment() {
 
     @SuppressLint("CheckResult")
     private fun initSubjects() {
-        (reference.get()!!.application as UMS).umsAPI.getCurrentStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
+        (reference.get()!!.application as UMS).umsAPI.getCurrentStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
+                score_list_loader.isGone = true
                 score_list.adapter = SubjectAdapter(it)
-            }
         }
+        }, {
+            (reference.get()!!.application as UMS).handleError(it)
+        })
     }
 
 }

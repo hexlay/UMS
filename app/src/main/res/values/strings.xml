@@ -4,7 +4,8 @@
     <string name="app_name">UMS</string>
     <string name="yes">კი</string>
     <string name="no">არა</string>
-    <string name="dnd">Nothing can distrub you today ^^</string>
+    <string name="dnd">Nothing can disturb you today ^^</string>
+    <string name="current_semester">მიმდინარე სემესტრი</string>
 
     <!-- Crash Reports -->
     <string name="crash_toast_text">Application has reduced to atoms, bugs are inevitable :(\nEmail has already been sent to developer and fix is probably in work ^^</string>
@@ -29,5 +30,7 @@
     <string name="profile_change_password_old">ძველი პაროლი</string>
     <string name="profile_change_password_new">ახალი პაროლი</string>
     <string name="profile_change_theme_title">თემის შეცვლა</string>
+    <string name="profile_change_password_error">პაროლი არასწორია</string>
+    <string name="profile_change_success">პაროლი წარმატებით შეიცვალა</string>
 
 </resources>

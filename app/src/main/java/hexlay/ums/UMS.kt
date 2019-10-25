@@ -7,16 +7,21 @@ import com.dbflow5.config.FlowManager
 import com.dbflow5.database.AndroidSQLiteOpenHelper
 import com.google.gson.GsonBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
+import hexlay.ums.api.ForbiddenException
+import hexlay.ums.api.NoConnectivityException
+import hexlay.ums.api.NotFoundException
 import hexlay.ums.api.UmsAPI
 import hexlay.ums.api.interceptors.AddCookiesInterceptor
-import hexlay.ums.api.interceptors.ConnectivityInterceptor
+import hexlay.ums.api.interceptors.ErrorInterceptor
 import hexlay.ums.api.interceptors.ReceivedCookiesInterceptor
 import hexlay.ums.database.UmsDatabase
+import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.acra.EmailSenderFactory
 import okhttp3.OkHttpClient
 import org.acra.ACRA
 import org.acra.annotation.AcraCore
 import org.acra.annotation.AcraToast
+import org.jetbrains.anko.toast
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,7 +47,7 @@ class UMS : Application() {
 
     private fun initAPI() {
         val client = OkHttpClient.Builder()
-            .addInterceptor(ConnectivityInterceptor(this))
+            .addInterceptor(ErrorInterceptor(this))
             .addInterceptor(AddCookiesInterceptor(this))
             .addInterceptor(ReceivedCookiesInterceptor(this))
             .build()
@@ -55,6 +60,17 @@ class UMS : Application() {
             .baseUrl(UmsAPI.BASE_URL)
             .build()
         umsAPI = retrofit.create(UmsAPI::class.java)
+    }
+
+    fun handleError(error: Throwable) {
+        when(error) {
+            is ForbiddenException -> {
+                PreferenceHelper(baseContext).clear()
+                toast("აუტორიზაციისას მოხდა შეცდომა")
+            }
+            is NoConnectivityException -> toast("ვერ მოხერხდა ინტერნეტთან დაკავშირება")
+            is NotFoundException -> toast("API მისამართი ვერ მოიძებნა")
+        }
     }
 
     override fun onTerminate() {

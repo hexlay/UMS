@@ -9,11 +9,13 @@
         android:id="@+id/profile_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp"
-        android:elevation="5dp">
+        android:elevation="5dp"
+        app:cardCornerRadius="10dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/profile_image"
                 android:layout_width="100dp"
@@ -24,8 +26,8 @@
                 app:civ_border_color="@color/colorPrimary"
                 app:civ_border_width="1dp"
                 app:civ_shadow="true"
-                app:civ_shadow_radius="15"
                 app:civ_shadow_color="@color/colorPrimary"
+                app:civ_shadow_radius="15"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,60 +72,77 @@
                     android:id="@+id/edit_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fabSize="mini"
-                    android:src="@drawable/ic_edit_password"
                     android:layout_margin="5dp"
+                    android:src="@drawable/ic_edit_password"
+                    app:backgroundTint="@color/colorPrimary"
                     app:elevation="1dp"
+                    app:fabSize="mini"
                     app:pressedTranslationZ="0dp"
-                    app:tint="@android:color/white"
-                    app:backgroundTint="@color/colorPrimary" />
+                    app:tint="@android:color/white" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/dark_mode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fabSize="mini"
-                    android:src="@drawable/ic_daynight"
                     android:layout_margin="5dp"
+                    android:src="@drawable/ic_daynight"
+                    app:backgroundTint="@color/colorPrimary"
                     app:elevation="1dp"
+                    app:fabSize="mini"
                     app:pressedTranslationZ="0dp"
-                    app:tint="@android:color/white"
-                    app:backgroundTint="@color/colorPrimary" />
+                    app:tint="@android:color/white" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/logout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:fabSize="mini"
-                    android:src="@drawable/ic_logout"
                     android:layout_margin="5dp"
+                    android:src="@drawable/ic_logout"
+                    app:backgroundTint="@color/colorPrimary"
                     app:elevation="1dp"
+                    app:fabSize="mini"
                     app:pressedTranslationZ="0dp"
-                    app:tint="@android:color/white"
-                    app:backgroundTint="@color/colorPrimary" />
+                    app:tint="@android:color/white" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:orientation="horizontal"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_holder">
 
+                <LinearLayout
+                    android:id="@+id/total_progress_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
-
-            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/all_semester_subjects"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false" />
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:id="@+id/all_semester_subjects_loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/all_semester_subjects"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+    </FrameLayout>
 
 </LinearLayout>

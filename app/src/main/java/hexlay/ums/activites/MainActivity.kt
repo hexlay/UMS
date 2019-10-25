@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         private set
     lateinit var preferenceHelper: PreferenceHelper
         private set
+
     private lateinit var scoreFragment: ScoreFragment
     private lateinit var calendarFragment: CalendarFragment
     private lateinit var profileFragment: ProfileFragment

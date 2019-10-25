@@ -17,10 +17,18 @@ class PreferenceHelper(context: Context) {
         }
 
     var darkMode: Int
-        get() = settings.getInt("ums_dark_mode", 1)
+        get() = settings.getInt("ums_dark_mode", 0)
         set(value) {
             settings.edit {
                 putInt("ums_dark_mode", value)
+            }
+        }
+
+    var passwordHash: String
+        get() = settings.getString("ums_pwd_hash", "")!!
+        set(value) {
+            settings.edit {
+                putString("ums_pwd_hash", value)
             }
         }
 

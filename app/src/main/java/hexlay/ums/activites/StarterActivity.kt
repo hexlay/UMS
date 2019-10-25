@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText
 import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.helpers.PreferenceHelper
+import hexlay.ums.helpers.md5
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.layout_auth.*
@@ -40,19 +41,24 @@ class StarterActivity : AppCompatActivity() {
                 cancelable(false)
                 cancelOnTouchOutside(false)
                 positiveButton(R.string.auth_login) {
-                    if (email.text!!.isEmpty() or password.text!!.isEmpty()) {
+                    val emailText = email.text.toString()
+                    val passwordText = password.text.toString()
+                    if (emailText.isEmpty() or passwordText.isEmpty()) {
                         email_input.error = resources.getString(R.string.auth_empty)
                         password_input.error = resources.getString(R.string.auth_empty)
                     } else {
-                        (application as UMS).umsAPI.login(email.text.toString(), password.text.toString()).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
+                        (application as UMS).umsAPI.login(emailText, passwordText).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                             if (it != null) {
                                 it.insert()
+                                preferenceHelper.passwordHash = passwordText.md5()
                                 dialog.dismiss()
                                 startMainActivity()
                             } else {
                                 toast(R.string.auth_error)
                             }
-                        }
+                        }, {
+                            (application as UMS).handleError(it)
+                        })
                     }
                 }
             }

@@ -8,11 +8,13 @@ data class Subject(
     @SerializedName("lecturer")
     var subjectLecturer: String,
     @SerializedName("score")
-    var subjectScore: Int,
+    var subjectScore: Double,
     @SerializedName("credits")
     var subjectCredit: Int,
     @SerializedName("semester")
     var subjectSemester: Int,
+    @SerializedName("state")
+    var subjectSemesterState: String,
     @SerializedName("details")
     var subjectDetails: List<SubjectDetail>
 )

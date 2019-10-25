@@ -1,8 +1,6 @@
 package hexlay.ums.helpers
 
 import android.content.Context
-import android.text.Html
-import android.text.Spanned
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -33,13 +31,8 @@ fun String.md5(): String {
     }
 }
 
-fun String.toHtml(): Spanned {
-    return if (AppHelper.isNougat) {
-        Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
-    } else {
-        @Suppress("DEPRECATION")
-        Html.fromHtml(this)
-    }
+fun Double.canBeInt(): Boolean {
+    return this - this.toInt() == 0.0
 }
 
 fun ImageView.setUrl(url: String) {

@@ -59,9 +59,6 @@ class AppHelper(activity: Activity) {
         val isOreo: Boolean
             get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
-        val isNougat: Boolean
-            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-
     }
 
 }

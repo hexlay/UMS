@@ -1,9 +1,11 @@
 package hexlay.ums.fragments.sections
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import hexlay.ums.R
+import hexlay.ums.helpers.canBeInt
 import hexlay.ums.models.subject.Subject
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
@@ -28,11 +30,15 @@ class SemesterSection(data: List<Subject>, private val sectionName: String) : Se
         return SemesterViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val itemHolder = holder as SemesterViewHolder
         itemHolder.subjectName.text = subjects[position].subjectName
-        itemHolder.subjectScore.text = subjects[position].subjectScore.toString()
-        itemHolder.subjectCredit.text = "საგნის კრედიტი: ${subjects[position].subjectCredit}"
+        itemHolder.subjectScore.text = if (subjects[position].subjectScore.canBeInt())
+            subjects[position].subjectScore.toInt().toString()
+        else
+            subjects[position].subjectScore.toString()
+        itemHolder.subjectCredit.text = "კრედიტი: ${subjects[position].subjectCredit}"
         itemHolder.subjectTeacher.text = subjects[position].subjectLecturer
         if (itemHolder.subjectTeacher.text.isEmpty()) {
             itemHolder.subjectTeacher.isGone = true
