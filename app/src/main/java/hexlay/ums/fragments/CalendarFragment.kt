@@ -90,7 +90,7 @@ class CalendarFragment : Fragment() {
                             container.dotView.makeInVisible()
                         }
                         selectedDate -> {
-                            container.dayText.setTextColorRes(R.color.colorPrimary)
+                            container.dayText.setTextColorRes(R.color.color_primary)
                             container.dayText.setBackgroundResource(R.drawable.selected)
                             container.dotView.makeInVisible()
                         }
@@ -114,7 +114,7 @@ class CalendarFragment : Fragment() {
                     container.legendLayout.tag = month.yearMonth
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
                         textView.text = daysOfWeek[index].name.first().toString()
-                        textView.setTextColorRes(R.color.notSoBlack)
+                        textView.setTextColorRes(R.color.darker_grey)
                     }
                 }
             }

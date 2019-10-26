@@ -63,10 +63,19 @@ class SubjectAdapter(var subjects: List<Subject>) : RecyclerView.Adapter<Subject
             subjectName.text = subject.subjectName
             subjectName.isSelected = true
             subjectTeacher.text = subject.subjectLecturer
-            subjectScore.text = if (subject.subjectScore.canBeInt())
-                subject.subjectScore.toInt().toString()
-            else
-                subject.subjectScore.toString()
+            subjectScore.text = if (subject.subjectScore > 0) {
+                if (subject.subjectScore.canBeInt())
+                    subject.subjectScore.toInt().toString()
+                else
+                    subject.subjectScore.toString()
+            } else if(subject.subjectFullScore > 0) {
+                if (subject.subjectFullScore.canBeInt())
+                    "0 (${subject.subjectFullScore.toInt()})"
+                else
+                    "0 (${subject.subjectFullScore})"
+            } else {
+                "0"
+            }
             subjectCredits.text = "კრედიტი: ${subject.subjectCredit}"
         }
 

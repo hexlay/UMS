@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:layout_marginStart="16dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/color_primary"
         android:textStyle="bold"
         tools:text="Section title" />
 

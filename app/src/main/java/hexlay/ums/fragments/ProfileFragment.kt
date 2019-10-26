@@ -23,7 +23,10 @@ import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.api.UmsAPI
 import hexlay.ums.fragments.sections.SemesterSection
-import hexlay.ums.helpers.*
+import hexlay.ums.helpers.PreferenceHelper
+import hexlay.ums.helpers.canBeInt
+import hexlay.ums.helpers.md5
+import hexlay.ums.helpers.setUrl
 import hexlay.ums.models.Profile
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -75,8 +78,6 @@ class ProfileFragment : Fragment() {
 
     @SuppressLint("CheckResult", "SetTextI18n")
     private fun initProfile() {
-        val topMargin = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10)
-        profile_card.setMargins(reference.get()!!.appHelper.dpOf(5), topMargin, reference.get()!!.appHelper.dpOf(5), 0)
         val profile = (select from Profile::class).result
         if (profile != null) {
             profile_name.text = "${profile.firstName} ${profile.lastName}"
@@ -114,7 +115,6 @@ class ProfileFragment : Fragment() {
             val newPassword = dialogView.findViewById<TextInputEditText>(R.id.new_password)
             dialog.show {
                 title(R.string.profile_edit)
-                message(text = "UN-TESTED FEATURE !!\nUSE IT ON YOUR OWN RISK !!")
                 noAutoDismiss()
                 positiveButton(R.string.profile_change_submit) {
                     val oldPasswordText = oldPassword.text.toString()
@@ -164,8 +164,8 @@ class ProfileFragment : Fragment() {
 
     private fun generateTotalsView(data: Double, max: Int): View {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_profile_totals, null)
-        view.total_progress.progress = data.toInt()
         view.total_progress.max = max
+        view.total_progress.progress = data.toInt()
         view.total_progress_text.text = if (data.canBeInt()) data.toInt().toString() else data.toString()
         return view
     }

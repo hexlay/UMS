@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F44336</color>
-    <color name="colorPrimaryDark">#D32F2F</color>
-    <color name="colorAccent">#F44336</color>
-    <color name="colorPrimaryLighter">#E57373</color>
+    <!-- App colors -->
+    <color name="color_primary">#F44336</color>
+    <color name="color_primary_light">#E57373</color>
+    <color name="color_primary_dark">#D32F2F</color>
+    <color name="color_accent">#F44336</color>
+
+    <!-- Background colors -->
     <color name="background">#FFFFFF</color>
-    <color name="dnd">#CC000000</color>
-    <color name="backgroundCalendar">#EEEEEE</color>
-    <color name="blackTransparent60">#99000000</color>
+    <color name="background_card">#FCFCFC</color>
+    <color name="background_calendar">#EEEEEE</color>
+
+    <!-- Subject colors -->
+    <color name="subject_passed">#81C784</color>
+    <color name="subject_not_passed">#FFF176</color>
+    <color name="subject_failed">#E57373</color>
+
     <!-- Transparents -->
-    <color name="transparent95">#F2FFFFFF</color>
-    <color name="transparent85">#D9FFFFFF</color>
-    <color name="transparent50">#80FFFFFF</color>
+    <color name="transparent_95">#F2FFFFFF</color>
+    <color name="transparent_85">#D9FFFFFF</color>
+    <color name="black_transparent_60">#99000000</color>
+
     <!-- More... -->
-    <color name="overlayStarter">#D9000000</color>
-    <color name="overlayCenter">#A6000000</color>
-    <color name="notSoBlack">#424242</color>
+    <color name="overlay_starter">#D9000000</color>
+    <color name="overlay_center">#A6000000</color>
+    <color name="darker_grey">#424242</color>
+    <color name="dnd">#CC000000</color>
 </resources>

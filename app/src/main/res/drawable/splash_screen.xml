@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/notSoBlack" />
+        android:drawable="@color/darker_grey" />
 
     <item
         android:drawable="@drawable/sangu_logo"

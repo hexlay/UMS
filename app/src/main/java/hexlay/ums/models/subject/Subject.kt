@@ -9,6 +9,8 @@ data class Subject(
     var subjectLecturer: String,
     @SerializedName("score")
     var subjectScore: Double,
+    @SerializedName("fullScore")
+    var subjectFullScore: Double,
     @SerializedName("credits")
     var subjectCredit: Int,
     @SerializedName("semester")

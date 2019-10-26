@@ -76,10 +76,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     2 -> {
                         navigation.selectedItemId = R.id.nav_subjects
-                        toolbar_overlay.isVisible = false
+                        toolbar_overlay.isVisible = true
                     }
                     3 -> {
-                        navigation.selectedItemId = R.id.nav_subjects
+                        navigation.selectedItemId = R.id.nav_notifications
                         toolbar_overlay.isVisible = false
                     }
                 }

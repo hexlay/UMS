@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="@string/current_semester"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/color_primary"
         android:textSize="19sp"
         android:textStyle="bold"
         android:gravity="center_horizontal"

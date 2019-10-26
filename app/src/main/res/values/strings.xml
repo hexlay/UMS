@@ -8,7 +8,7 @@
     <string name="current_semester">მიმდინარე სემესტრი</string>
 
     <!-- Crash Reports -->
-    <string name="crash_toast_text">Application has reduced to atoms, bugs are inevitable :(\nEmail has already been sent to developer and fix is probably in work ^^</string>
+    <string name="crash_toast_text">Application may reduce to atoms, bugs are inevitable :(\nEmail has already been sent to developer and fix is probably in work ^^</string>
     <string name="crash_email_subject">UMS - Real time crash report</string>
 
     <!-- Auth -->

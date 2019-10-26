@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/backgroundCalendar"
+                android:background="@color/background_calendar"
                 android:fontFamily="sans-serif-medium"
                 android:paddingStart="20dp"
                 android:paddingTop="12dp"

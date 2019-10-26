@@ -38,7 +38,6 @@ class EmailSender : ReportSender {
                         return PasswordAuthentication("dummyforsend@gmail.com", "VeryVeryDummy1")
                     }
                 })
-                session.debug = true
 
                 val errorContent = errorContents[0]
                 var crashContent = "<b>Date:</b> ${errorContent.getString(ReportField.USER_APP_START_DATE)} -> ${errorContent.getString(ReportField.USER_CRASH_DATE)} <br>"
