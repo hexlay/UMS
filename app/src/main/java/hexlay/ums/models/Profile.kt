@@ -7,6 +7,8 @@ import hexlay.ums.database.UmsDatabase
 
 @Table(database = UmsDatabase::class, allFields = true)
 data class Profile(
+    @SerializedName("id")
+    var id: String? = null,
     @SerializedName("firstName")
     var firstName: String? = null,
     @SerializedName("lastName")

@@ -23,10 +23,7 @@ import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.api.UmsAPI
 import hexlay.ums.fragments.sections.SemesterSection
-import hexlay.ums.helpers.PreferenceHelper
-import hexlay.ums.helpers.canBeInt
-import hexlay.ums.helpers.md5
-import hexlay.ums.helpers.setUrl
+import hexlay.ums.helpers.*
 import hexlay.ums.models.Profile
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -37,6 +34,7 @@ import kotlinx.android.synthetic.main.layout_profile_totals.view.*
 import org.jetbrains.anko.support.v4.toast
 import java.lang.ref.WeakReference
 
+@SuppressLint("CheckResult")
 class ProfileFragment : Fragment() {
 
     private lateinit var reference: WeakReference<MainActivity>
@@ -51,13 +49,11 @@ class ProfileFragment : Fragment() {
         reference = WeakReference(activity as MainActivity)
         semesterAdapter = SectionedRecyclerViewAdapter()
         all_semester_subjects.layoutManager = LinearLayoutManager(context)
-        all_semester_subjects.setPadding(0, 0, 0, reference.get()!!.appHelper.actionBarSize)
         initSubjects()
         initProfile()
         initTotals()
     }
 
-    @SuppressLint("CheckResult")
     private fun initSubjects() {
         (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
@@ -70,10 +66,29 @@ class ProfileFragment : Fragment() {
                     semesterAdapter.addSection(SemesterSection(value, semesterName))
                 }
                 all_semester_subjects.adapter = semesterAdapter
+                initPreviousCourseSubjects()
             }
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+    }
+
+    private fun initPreviousCourseSubjects() {
+        val profile = (select from Profile::class).result
+        if (profile?.id != null) {
+            (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjectsPrevijous(profile.id!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                if (it.isNotEmpty()) {
+                    val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.subjectSemester }).groupBy { gIt -> gIt.subjectSemester }
+                    for ((key, value) in subjectMap) {
+                        val semesterName = if (key > 0) "სემესტრი $key (მობილობამდე)" else "აღიარებული საგნები (მობილობამდე)"
+                        semesterAdapter.addSection(SemesterSection(value, semesterName))
+                    }
+                    semesterAdapter.notifyDataSetChanged()
+                }
+            }, {
+                (reference.get()!!.application as UMS).handleError(it)
+            })
+        }
     }
 
     @SuppressLint("CheckResult", "SetTextI18n")
@@ -139,7 +154,10 @@ class ProfileFragment : Fragment() {
             }
         }
         dark_mode.setOnClickListener {
-            val darkModeItems = listOf("Bring the light", "Fall in the darkness", "Follow system")
+            val darkModeItems = mutableListOf("Bring the light", "Fall in the darkness", "Follow system")
+            if (!AppHelper.isPie) {
+                darkModeItems.removeAt(2)
+            }
             MaterialDialog(context!!).show {
                 title(R.string.profile_change_theme_title)
                 listItemsSingleChoice(items = darkModeItems, initialSelection = reference.get()!!.preferenceHelper.darkMode) { _, index, _ ->

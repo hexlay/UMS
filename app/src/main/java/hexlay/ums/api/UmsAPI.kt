@@ -2,14 +2,12 @@ package hexlay.ums.api
 
 import hexlay.ums.models.Profile
 import hexlay.ums.models.StudentTotals
+import hexlay.ums.models.notifications.NotificationBase
 import hexlay.ums.models.session.Session
 import hexlay.ums.models.subject.Subject
 import io.reactivex.Observable
 import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface UmsAPI {
 
@@ -23,11 +21,27 @@ interface UmsAPI {
     @GET("subject/student/list")
     fun getTotalStudentSubjects(): Observable<List<Subject>>
 
+    @GET("subject/student/list")
+    fun getTotalStudentSubjectsPrevijous(
+        @Query("student")
+        student: String
+    ): Observable<List<Subject>>
+
     @GET("subject/totals")
     fun getStudentTotals(): Observable<StudentTotals>
 
     @GET("session/student/list")
     fun getStudentSessions(): Observable<List<Session>>
+
+    @GET("notification/received")
+    fun getNotifications(
+        @Query("state")
+        state: String = "unread",
+        @Query("limit")
+        limit: String = "20",
+        @Query("page")
+        page: String = "1"
+    ): Observable<NotificationBase>
 
     @POST("auth/login")
     @FormUrlEncoded
@@ -43,6 +57,15 @@ interface UmsAPI {
     fun passwordChange(
         @Field("password")
         password: String
+    ): Observable<Response<Void>>
+
+    @POST("notification/mark/{id}")
+    @FormUrlEncoded
+    fun markNotification(
+        @Path("id")
+        id: String,
+        @Field("state")
+        state: String = "read"
     ): Observable<Response<Void>>
 
     @POST("auth/logout")

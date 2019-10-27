@@ -30,8 +30,10 @@ class ScoreFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         reference = WeakReference(activity as MainActivity)
         semester_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
-        score_list.setPadding(0, 0, 0, reference.get()!!.appHelper.actionBarSize)
         score_list.layoutManager = LinearLayoutManager(context)
+        score_list_refresher.setOnRefreshListener {
+            initSubjects()
+        }
         initSubjects()
     }
 
@@ -41,7 +43,8 @@ class ScoreFragment : Fragment() {
             if (it.isNotEmpty()) {
                 score_list_loader.isGone = true
                 score_list.adapter = SubjectAdapter(it)
-        }
+            }
+            score_list_refresher.isRefreshing = false
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })

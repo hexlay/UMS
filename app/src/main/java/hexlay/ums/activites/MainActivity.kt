@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager
 import hexlay.ums.R
 import hexlay.ums.adapters.ViewPagerAdapter
 import hexlay.ums.fragments.CalendarFragment
+import hexlay.ums.fragments.NotificationFragment
 import hexlay.ums.fragments.ProfileFragment
 import hexlay.ums.fragments.ScoreFragment
 import hexlay.ums.helpers.AppHelper
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scoreFragment: ScoreFragment
     private lateinit var calendarFragment: CalendarFragment
     private lateinit var profileFragment: ProfileFragment
+    private lateinit var notificationFragment: NotificationFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +45,8 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     fun initAppTheme() {
-        when(preferenceHelper.darkMode) {
+        when (preferenceHelper.darkMode) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(supportFragmentManager)
         adapter.addFragment(scoreFragment)
         adapter.addFragment(calendarFragment)
+        adapter.addFragment(notificationFragment)
         adapter.addFragment(profileFragment)
         view_pager.adapter = adapter
         view_pager.offscreenPageLimit = 4
@@ -75,11 +77,11 @@ class MainActivity : AppCompatActivity() {
                         toolbar_overlay.isVisible = true
                     }
                     2 -> {
-                        navigation.selectedItemId = R.id.nav_subjects
-                        toolbar_overlay.isVisible = true
+                        navigation.selectedItemId = R.id.nav_notifications
+                        toolbar_overlay.isVisible = false
                     }
                     3 -> {
-                        navigation.selectedItemId = R.id.nav_notifications
+                        navigation.selectedItemId = R.id.nav_profile
                         toolbar_overlay.isVisible = false
                     }
                 }
@@ -96,8 +98,8 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_scores -> view_pager.currentItem = 0
                 R.id.nav_calendar -> view_pager.currentItem = 1
-                R.id.nav_subjects -> view_pager.currentItem = 2
-                R.id.nav_notifications -> view_pager.currentItem = 3
+                R.id.nav_notifications -> view_pager.currentItem = 2
+                R.id.nav_profile -> view_pager.currentItem = 3
             }
             true
         }
@@ -107,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         scoreFragment = ScoreFragment()
         calendarFragment = CalendarFragment()
         profileFragment = ProfileFragment()
+        notificationFragment = NotificationFragment()
         setupViewPager()
         toolbar_overlay.setSize(height = appHelper.statusBarHeight + appHelper.actionBarSize)
     }

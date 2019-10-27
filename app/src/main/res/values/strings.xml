@@ -33,4 +33,13 @@
     <string name="profile_change_password_error">პაროლი არასწორია</string>
     <string name="profile_change_success">პაროლი წარმატებით შეიცვალა</string>
 
+    <!-- Calendar Days -->
+    <string name="calendar_monday">ორშ.</string>
+    <string name="calendar_tuesday">სამშ.</string>
+    <string name="calendar_wednesday">ოთხშ.</string>
+    <string name="calendar_thursday">ხუთშ.</string>
+    <string name="calendar_friday">პარ.</string>
+    <string name="calendar_saturday">შაბ.</string>
+    <string name="calendar_sunday">კვ.</string>
+
 </resources>

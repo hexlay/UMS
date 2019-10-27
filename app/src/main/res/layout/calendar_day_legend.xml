@@ -1,73 +1,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/legendLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="horizontal"
-    tools:ignore="HardcodedText">
+    android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/legendText1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="SUN"
+        android:text="@string/calendar_monday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="MON"
+        android:text="@string/calendar_tuesday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="TUE"
+        android:text="@string/calendar_wednesday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="WED"
+        android:text="@string/calendar_thursday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="THU"
+        android:text="@string/calendar_friday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="FRI"
+        android:text="@string/calendar_saturday"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/legendText7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="SAT"
+        android:text="@string/calendar_sunday"
         android:textSize="14sp" />
 
 </LinearLayout>

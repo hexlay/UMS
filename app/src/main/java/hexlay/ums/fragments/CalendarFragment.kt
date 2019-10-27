@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,19 +18,19 @@ import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.CalendarSubjectAdapter
-import hexlay.ums.helpers.*
+import hexlay.ums.helpers.setMargins
+import hexlay.ums.helpers.setTextColorRes
 import hexlay.ums.models.session.Session
 import hexlay.ums.views.DayViewContainer
 import hexlay.ums.views.MonthViewContainer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_calendar.*
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.temporal.WeekFields
 import java.lang.ref.WeakReference
-import java.util.*
 
 class CalendarFragment : Fragment() {
 
@@ -58,7 +56,6 @@ class CalendarFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        subject_view.setPadding(0, 0, 0, reference.get()!!.appHelper.statusBarHeight)
         subject_view.layoutManager = LinearLayoutManager(context)
         subject_view.adapter = calendarSubjectAdapter
     }
@@ -67,14 +64,12 @@ class CalendarFragment : Fragment() {
         val currentMonth = YearMonth.now()
         val firstMonth = currentMonth.minusMonths(10)
         val lastMonth = currentMonth.plusMonths(10)
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        calendar_view.setup(firstMonth, lastMonth, firstDayOfWeek)
+        calendar_view.setup(firstMonth, lastMonth, DayOfWeek.MONDAY)
         calendar_view.scrollToMonth(currentMonth)
         selectDate(today)
     }
 
     private fun setContainers() {
-        val daysOfWeek = daysOfWeekFromLocale()
         calendar_view.dayBinder = object : DayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view, this@CalendarFragment)
             override fun bind(container: DayViewContainer, day: CalendarDay) {
@@ -82,42 +77,32 @@ class CalendarFragment : Fragment() {
                 container.dayText.text = day.date.dayOfMonth.toString()
 
                 if (day.owner == DayOwner.THIS_MONTH) {
-                    container.dayText.makeVisible()
+                    container.dayText.isVisible = true
                     when (day.date) {
                         today -> {
                             container.dayText.setTextColorRes(android.R.color.white)
                             container.dayText.setBackgroundResource(R.drawable.today)
-                            container.dotView.makeInVisible()
+                            container.dotView.isVisible = false
                         }
                         selectedDate -> {
-                            container.dayText.setTextColorRes(R.color.color_primary)
                             container.dayText.setBackgroundResource(R.drawable.selected)
-                            container.dotView.makeInVisible()
+                            container.dotView.isVisible = false
                         }
                         else -> {
                             val currentSubjects = savedSessions.filter { it.dayOfWeek == day.date.dayOfWeek.value }.toList()
-                            container.dayText.setTextColorRes(android.R.color.black)
                             container.dayText.background = null
                             container.dotView.isVisible = currentSubjects.isNotEmpty()
                         }
                     }
                 } else {
-                    container.dayText.makeInVisible()
-                    container.dotView.makeInVisible()
+                    container.dayText.isVisible = false
+                    container.dotView.isVisible = false
                 }
             }
         }
         calendar_view.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
             override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, month: CalendarMonth) {
-                if (container.legendLayout.tag == null) {
-                    container.legendLayout.tag = month.yearMonth
-                    container.legendLayout.children.map { it as TextView }.forEachIndexed { index, textView ->
-                        textView.text = daysOfWeek[index].name.first().toString()
-                        textView.setTextColorRes(R.color.darker_grey)
-                    }
-                }
-            }
+            override fun bind(container: MonthViewContainer, month: CalendarMonth) {}
         }
     }
 

@@ -7,8 +7,8 @@
     <color name="color_accent">#F44336</color>
 
     <!-- Background colors -->
-    <color name="background">#212121</color>
-    <color name="background_card">#414141</color>
+    <color name="background">#121212</color>
+    <color name="background_card">#212121</color>
     <color name="background_calendar">#424242</color>
 
     <!-- Subject colors -->
@@ -17,8 +17,8 @@
     <color name="subject_failed">#B71C1C</color>
 
     <!-- Transparents -->
-    <color name="transparent_95">#F2212121</color>
-    <color name="transparent_85">#D9212121</color>
+    <color name="transparent_95">#F2121212</color>
+    <color name="transparent_85">#D9121212</color>
     <color name="black_transparent_60">#99000000</color>
 
     <!-- More... -->

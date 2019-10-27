@@ -32,8 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/background_calendar"
-                android:fontFamily="sans-serif-medium"
+                android:background="@color/background_card"
                 android:paddingStart="20dp"
                 android:paddingTop="12dp"
                 android:paddingEnd="20dp"
@@ -46,19 +45,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:nestedScrollingEnabled="false" />
+                android:nestedScrollingEnabled="false"
+                android:paddingBottom="?actionBarSize" />
 
             <TextView
                 android:id="@+id/calendar_dnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dnd"
-                android:visibility="gone"
-                android:textSize="17sp"
-                android:drawablePadding="5dp"
-                android:layout_margin="10dp"
                 android:layout_gravity="center"
-                android:drawableStart="@drawable/ic_dnd"/>
+                android:layout_margin="10dp"
+                android:drawableStart="@drawable/ic_dnd"
+                android:drawablePadding="5dp"
+                android:text="@string/dnd"
+                android:textSize="17sp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
