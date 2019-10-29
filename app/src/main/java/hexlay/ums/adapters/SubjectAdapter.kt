@@ -20,7 +20,7 @@ import hexlay.ums.models.subject.SubjectDetail
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_subject_detail_item.view.*
 
-class SubjectAdapter(var subjects: List<Subject>) : RecyclerView.Adapter<SubjectAdapter.RViewHolder>() {
+class SubjectAdapter(private var subjects: List<Subject>) : RecyclerView.Adapter<SubjectAdapter.RViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.subject_view_extend, parent, false)

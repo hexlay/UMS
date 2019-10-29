@@ -162,7 +162,7 @@ class ProfileFragment : Fragment() {
                 title(R.string.profile_change_theme_title)
                 listItemsSingleChoice(items = darkModeItems, initialSelection = reference.get()!!.preferenceHelper.darkMode) { _, index, _ ->
                     reference.get()!!.preferenceHelper.darkMode = index
-                    reference.get()!!.initAppTheme()
+                    reference.get()!!.applyDayNight()
                 }
             }
         }

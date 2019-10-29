@@ -1,5 +1,6 @@
 package hexlay.ums.api
 
+import hexlay.ums.models.Exam
 import hexlay.ums.models.Profile
 import hexlay.ums.models.StudentTotals
 import hexlay.ums.models.notifications.NotificationBase
@@ -32,6 +33,9 @@ interface UmsAPI {
 
     @GET("session/student/list")
     fun getStudentSessions(): Observable<List<Session>>
+
+    @GET("exams/student/list")
+    fun getStudentExams(): Observable<List<Exam>>
 
     @GET("notification/received")
     fun getNotifications(

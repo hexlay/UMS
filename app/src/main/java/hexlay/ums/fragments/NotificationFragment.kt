@@ -26,8 +26,8 @@ class NotificationFragment : Fragment() {
         reference = WeakReference(activity as MainActivity)
         notification_tabs.setMargins(top = reference.get()!!.appHelper.statusBarHeight)
         val adapter = ViewPagerAdapter(childFragmentManager)
-        adapter.addFragment(NotificationPageFragment.newInstance("unread"))
-        adapter.addFragment(NotificationPageFragment.newInstance("read"))
+        adapter.addFragment(NotificationPageFragment.newInstance("unread"), -1)
+        adapter.addFragment(NotificationPageFragment.newInstance("read"), -1)
         notification_pager.adapter = adapter
         notification_pager.offscreenPageLimit = 2
         notification_tabs.setupWithViewPager(notification_pager)

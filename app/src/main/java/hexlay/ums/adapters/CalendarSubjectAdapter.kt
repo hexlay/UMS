@@ -12,10 +12,11 @@ import hexlay.ums.models.session.Session
 import kotlinx.android.extensions.LayoutContainer
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CalendarSubjectAdapter : RecyclerView.Adapter<CalendarSubjectAdapter.RViewHolder>() {
 
-    private val subjects = mutableListOf<Session>()
+    private val subjects = ArrayList<Session>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.subject_view_calendar, parent, false)

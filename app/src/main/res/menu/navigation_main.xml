@@ -3,21 +3,26 @@
     <item
         android:id="@+id/nav_scores"
         android:icon="@drawable/ic_sc_subjects"
-        android:title="ქულები" />
+        android:title="@string/nav_score" />
 
     <item
         android:id="@+id/nav_calendar"
         android:icon="@drawable/ic_ls_subjects"
-        android:title="ცხრილი" />
+        android:title="@string/nav_calendar" />
+
+    <item
+        android:id="@+id/nav_exams"
+        android:icon="@drawable/ic_exams"
+        android:title="@string/nav_exams" />
 
     <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/ic_notifications"
-        android:title="შეტყობინებები" />
+        android:title="@string/nav_notifications" />
 
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"
-        android:title="პროფილი" />
+        android:title="@string/nav_profile" />
 
 </menu>

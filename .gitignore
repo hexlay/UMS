@@ -59,6 +59,9 @@ captures/
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
+# Private key
+private_key.pepk
+
 # Freeline
 freeline.py
 freeline/

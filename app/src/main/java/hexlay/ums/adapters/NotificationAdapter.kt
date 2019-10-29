@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference
 class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<NotificationAdapter.RViewHolder>() {
 
     private var reference: WeakReference<UMS> = WeakReference(application)
-    private val notifications = mutableListOf<Notification>()
+    private val notifications = ArrayList<Notification>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.notification_view, parent, false)
@@ -61,14 +61,14 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
 
         fun bind(notification: NotificationData) {
             notificationName.text = notification.notificationDataTitle
+            notificationName.isSelected = true
             notificationText.text = notification.notificationDataText.toHtml()
         }
 
     }
 
     fun clearlyAddNotifications(data: List<Notification>) {
-        if (notifications.isNotEmpty())
-            notifications.clear()
+        notifications.clear()
         notifications.addAll(data)
         notifyDataSetChanged()
     }

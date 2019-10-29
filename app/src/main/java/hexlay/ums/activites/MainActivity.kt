@@ -8,10 +8,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import hexlay.ums.R
 import hexlay.ums.adapters.ViewPagerAdapter
-import hexlay.ums.fragments.CalendarFragment
-import hexlay.ums.fragments.NotificationFragment
-import hexlay.ums.fragments.ProfileFragment
-import hexlay.ums.fragments.ScoreFragment
+import hexlay.ums.fragments.*
 import hexlay.ums.helpers.AppHelper
 import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.setSize
@@ -23,11 +20,7 @@ class MainActivity : AppCompatActivity() {
         private set
     lateinit var preferenceHelper: PreferenceHelper
         private set
-
-    private lateinit var scoreFragment: ScoreFragment
-    private lateinit var calendarFragment: CalendarFragment
-    private lateinit var profileFragment: ProfileFragment
-    private lateinit var notificationFragment: NotificationFragment
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +31,14 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         appHelper = AppHelper(this)
         preferenceHelper = PreferenceHelper(baseContext)
+        appHelper.makeFullscreen()
         initToolbar()
         setupNavigationView()
-        appHelper.makeFullscreen()
-        initAppTheme()
+        applyDayNight()
     }
 
 
-    fun initAppTheme() {
+    fun applyDayNight() {
         when (preferenceHelper.darkMode) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -55,63 +48,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewPager() {
-        val adapter = ViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(scoreFragment)
-        adapter.addFragment(calendarFragment)
-        adapter.addFragment(notificationFragment)
-        adapter.addFragment(profileFragment)
-        view_pager.adapter = adapter
+        viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+        viewPagerAdapter.addFragment(ScoreFragment(), R.id.nav_scores)
+        viewPagerAdapter.addFragment(CalendarFragment(), R.id.nav_calendar)
+        viewPagerAdapter.addFragment(ExamFragment(), R.id.nav_exams)
+        viewPagerAdapter.addFragment(NotificationFragment(), R.id.nav_notifications)
+        viewPagerAdapter.addFragment(ProfileFragment(), R.id.nav_profile)
+        view_pager.adapter = viewPagerAdapter
         view_pager.offscreenPageLimit = 4
         view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                when (position) {
-                    0 -> {
-                        navigation.selectedItemId = R.id.nav_scores
-                        toolbar_overlay.isVisible = false
-                    }
-                    1 -> {
-                        navigation.selectedItemId = R.id.nav_calendar
-                        toolbar_overlay.isVisible = true
-                    }
-                    2 -> {
-                        navigation.selectedItemId = R.id.nav_notifications
-                        toolbar_overlay.isVisible = false
-                    }
-                    3 -> {
-                        navigation.selectedItemId = R.id.nav_profile
-                        toolbar_overlay.isVisible = false
-                    }
-                }
+                navigation.selectedItemId = viewPagerAdapter.getFragmentId(position)
+                toolbar_overlay.isVisible = position == 1
             }
 
-            override fun onPageScrollStateChanged(state: Int) {
-
-            }
+            override fun onPageScrollStateChanged(state: Int) {}
         })
     }
 
     private fun setupNavigationView() {
         navigation.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_scores -> view_pager.currentItem = 0
-                R.id.nav_calendar -> view_pager.currentItem = 1
-                R.id.nav_notifications -> view_pager.currentItem = 2
-                R.id.nav_profile -> view_pager.currentItem = 3
-            }
+            view_pager.currentItem = viewPagerAdapter.getPositionById(item.itemId)
             true
         }
     }
 
     private fun initToolbar() {
-        scoreFragment = ScoreFragment()
-        calendarFragment = CalendarFragment()
-        profileFragment = ProfileFragment()
-        notificationFragment = NotificationFragment()
         setupViewPager()
         toolbar_overlay.setSize(height = appHelper.statusBarHeight + appHelper.actionBarSize)
+    }
+
+    fun disableExams() {
+        if (view_pager.currentItem == 2) {
+            view_pager.currentItem = 0
+        }
+        viewPagerAdapter.removeFragment(2)
+        navigation.menu.removeItem(R.id.nav_exams)
+        view_pager.offscreenPageLimit = 3
     }
 
     fun exitMainActivity() {

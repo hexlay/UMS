@@ -6,6 +6,14 @@
     <string name="no">არა</string>
     <string name="dnd">Nothing can disturb you today ^^</string>
     <string name="current_semester">მიმდინარე სემესტრი</string>
+    <string name="current_exams">გამოცდები</string>
+
+    <!-- Navigation -->
+    <string name="nav_score">ქულები</string>
+    <string name="nav_calendar">ცხრილი</string>
+    <string name="nav_exams">გამოცდები</string>
+    <string name="nav_notifications">შეტყობინებები</string>
+    <string name="nav_profile">პროფილი</string>
 
     <!-- Crash Reports -->
     <string name="crash_toast_text">Application may reduce to atoms, bugs are inevitable :(\nEmail has already been sent to developer and fix is probably in work ^^</string>
