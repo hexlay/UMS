@@ -58,9 +58,9 @@ class ProfileFragment : Fragment() {
         (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
                 all_semester_subjects_loader.isGone = true
-                val creditsSum = it.filter { sItSem -> sItSem.subjectSemesterState == "passed" }.sumBy { sItCred -> sItCred.subjectCredit }
+                val creditsSum = it.filter { sItSem -> sItSem.semesterState == "passed" }.sumBy { sItCred -> sItCred.credit }
                 total_progress_holder.addView(generateTotalsView(creditsSum.toDouble(), 240))
-                val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.subjectSemester }).groupBy { gIt -> gIt.subjectSemester }
+                val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.semester }).groupBy { gIt -> gIt.semester }
                 for ((key, value) in subjectMap) {
                     val semesterName = if (key > 0) "სემესტრი $key" else "აღიარებული საგნები"
                     semesterAdapter.addSection(SemesterSection(value, semesterName))
@@ -78,7 +78,7 @@ class ProfileFragment : Fragment() {
         if (profile?.id != null) {
             (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjectsPrevijous(profile.id!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                 if (it.isNotEmpty()) {
-                    val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.subjectSemester }).groupBy { gIt -> gIt.subjectSemester }
+                    val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.semester }).groupBy { gIt -> gIt.semester }
                     for ((key, value) in subjectMap) {
                         val semesterName = if (key > 0) "სემესტრი $key (მობილობამდე)" else "აღიარებული საგნები (მობილობამდე)"
                         semesterAdapter.addSection(SemesterSection(value, semesterName))

@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Notification(
     @SerializedName("_id")
-    var notificationId: String,
+    var id: String,
     @SerializedName("notification")
-    var notificationData: NotificationData,
+    var data: NotificationData,
     @SerializedName("state")
-    var notificationState: String
+    var state: String
 )

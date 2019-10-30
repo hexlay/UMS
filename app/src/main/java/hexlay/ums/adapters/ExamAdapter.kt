@@ -32,16 +32,16 @@ class ExamAdapter(private val exams: List<Exam>) : RecyclerView.Adapter<ExamAdap
 
         @SuppressLint("SetTextI18n")
         fun bind(exam: Exam) {
-            examSubject.text = exam.examSubject
+            examSubject.text = exam.subject
             examSubject.isSelected = true
-            examHour.text = exam.examTime
-            val examDay = exam.examDay.replace("-", "/")
-            val examHall = if (!TextUtils.isDigitsOnly(exam.examHall))
-                exam.examHall
+            examHour.text = exam.time
+            val examDay = exam.day.replace("-", "/")
+            val examHall = if (!TextUtils.isDigitsOnly(exam.hall))
+                exam.hall
             else
-                "${exam.examHall} აუდიტორია"
-            examInfo.text = if (exam.examSeat > 0 )
-                "${examDay}, $examHall - ${exam.examSeat}"
+                "${exam.hall} აუდიტორია"
+            examInfo.text = if (exam.seat > 0 )
+                "${examDay}, $examHall - ${exam.seat}"
             else
                 "${examDay}, $examHall"
         }

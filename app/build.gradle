@@ -10,8 +10,8 @@ android {
         applicationId "hexlay.ums"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 2
-        versionName "${getDate('Y')}${getDate('M')}"
+        versionCode 4
+        versionName "${getDate('M')}${getDate('d')}"
     }
     buildTypes {
         release {
@@ -20,7 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

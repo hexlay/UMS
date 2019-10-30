@@ -86,8 +86,8 @@ class NotificationPageFragment : Fragment() {
 
     private fun handleData(data: NotificationBase) {
         isWaiting = true
-        maxPages = data.notificationMaxPages
-        page = data.notificationCurrentPage
+        maxPages = data.maxPages
+        page = data.currentPage
         if (page == 1) {
             notificationAdapter.clearlyAddNotifications(data.notifications)
         } else {

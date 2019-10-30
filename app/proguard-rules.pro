@@ -20,23 +20,30 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -printmapping build/outputs/mapping/release/mapping.txt
+
+-keepattributes SourceFile,LineNumberTable
 -keepattributes Signature
 -keepattributes *Annotation*
+
+-keep class * implements org.acra.plugins.Plugin {*;}
 -keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
+-keep class * extends com.dbflow5.config.DatabaseHolder { *; }
+
+# Google
 -keep class sun.misc.Unsafe { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+
+-keep enum org.acra.** {*;}
+-keep interface okhttp3.** { *; }
+
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
--keep class android.support.v7.widget.SearchView { *; }
--keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }
--keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }
--keep class * extends com.dbflow5.config.DatabaseHolder { *; }
--keepclassmembers class * {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
+-dontwarn android.support.**
+-dontwarn okhttp3.**
+-dontwarn sun.misc.**

@@ -44,23 +44,23 @@ class SemesterSection(data: List<Subject>, private val sectionName: String) : Se
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val itemHolder = holder as SemesterViewHolder
         val subject = subjects[position]
-        itemHolder.subjectName.text = subject.subjectName
-        itemHolder.subjectScore.text = if (subject.subjectScore > 0) {
-            if (subject.subjectScore.canBeInt())
-                subject.subjectScore.toInt().toString()
+        itemHolder.subjectName.text = subject.name
+        itemHolder.subjectScore.text = if (subject.score > 0) {
+            if (subject.score.canBeInt())
+                subject.score.toInt().toString()
             else
-                subject.subjectScore.toString()
-        } else if(subject.subjectFullScore > 0) {
-            if (subject.subjectFullScore.canBeInt())
-                "0 (${subject.subjectFullScore.toInt()})"
+                subject.score.toString()
+        } else if(subject.fullScore > 0) {
+            if (subject.fullScore.canBeInt())
+                "0 (${subject.fullScore.toInt()})"
             else
-                "0 (${subject.subjectFullScore})"
+                "0 (${subject.fullScore})"
         } else {
             "0"
         }
-        itemHolder.subjectCredit.text = "კრედიტი: ${subject.subjectCredit}"
-        itemHolder.subjectTeacher.text = subject.subjectLecturer
-        when(subject.subjectSemesterState) {
+        itemHolder.subjectCredit.text = "კრედიტი: ${subject.credit}"
+        itemHolder.subjectTeacher.text = subject.lecturer
+        when(subject.semesterState) {
             "passed" -> itemHolder.subjectHolder.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.subject_passed)
             "current" -> itemHolder.subjectHolder.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.subject_not_passed)
             else -> itemHolder.subjectHolder.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.subject_failed)
@@ -72,7 +72,7 @@ class SemesterSection(data: List<Subject>, private val sectionName: String) : Se
             itemHolder.subjectCredit.isGone = true
         }
         itemHolder.subjectHolder.setOnClickListener {
-            val subjectDetails = subject.subjectDetails
+            val subjectDetails = subject.details
             if (subjectDetails != null && subjectDetails.isNotEmpty()) {
                 val dialog = MaterialDialog(holder.itemView.context, BottomSheet()).customView(R.layout.layout_subject_detail)
                 val dialogView = dialog.getCustomView()
@@ -81,7 +81,7 @@ class SemesterSection(data: List<Subject>, private val sectionName: String) : Se
                     subjectDetailHolder.addView(generateTextView(holder.itemView.context, detail))
                 }
                 dialog.show {
-                    title(text = subject.subjectName)
+                    title(text = subject.name)
                 }
             }
         }
@@ -91,22 +91,22 @@ class SemesterSection(data: List<Subject>, private val sectionName: String) : Se
     @SuppressLint("SetTextI18n")
     private fun generateTextView(context: Context, detail: SubjectDetail): View {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_subject_detail_item, null)
-        view.subject_detail_name.text = detail.detailName
+        view.subject_detail_name.text = detail.name
         view.subject_detail_name.isSelected = true
-        if (detail.detailGrade != null) {
-            val gradeValue = if (detail.detailType == "group")
-                if (detail.detailGrade.gradeMax.canBeInt())
-                    detail.detailGrade.gradeMax.toInt()
+        if (detail.grade != null) {
+            val gradeValue = if (detail.type == "group")
+                if (detail.grade.maximumScore.canBeInt())
+                    detail.grade.maximumScore.toInt()
                 else
-                    detail.detailGrade.gradeMax
+                    detail.grade.maximumScore
             else
-                if (detail.detailGrade.gradeValue.canBeInt())
-                    detail.detailGrade.gradeValue.toInt()
+                if (detail.grade.relativeScore.canBeInt())
+                    detail.grade.relativeScore.toInt()
                 else
-                    detail.detailGrade.gradeValue
-            view.subject_detail_result.text = "$gradeValue (${detail.detailMaxScore.toInt()}-დან)"
+                    detail.grade.relativeScore
+            view.subject_detail_result.text = "$gradeValue (${detail.maximalScore.toInt()}-დან)"
         } else {
-            view.subject_detail_result.text = "_ (${detail.detailMaxScore.toInt()}-დან)"
+            view.subject_detail_result.text = "_ (${detail.maximalScore.toInt()}-დან)"
         }
         return view
     }

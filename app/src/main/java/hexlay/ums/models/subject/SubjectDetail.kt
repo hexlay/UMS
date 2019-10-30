@@ -1,19 +1,16 @@
 package hexlay.ums.models.subject
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
 data class SubjectDetail(
     @SerializedName("name")
-    var detailName: String,
+    var name: String,
     @SerializedName("type")
-    var detailType: String,
+    var type: String,
     @SerializedName("minValue")
-    var detailMinScore: Double,
+    var minimalScore: Double,
     @SerializedName("absolute")
-    var detailMaxScore: Double,
+    var maximalScore: Double,
     @SerializedName("grade")
-    var detailGrade: SubjectGrade
-) : Parcelable
+    var grade: SubjectGrade
+)

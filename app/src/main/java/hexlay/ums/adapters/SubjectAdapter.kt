@@ -43,7 +43,7 @@ class SubjectAdapter(private var subjects: List<Subject>) : RecyclerView.Adapter
 
         init {
             subjectHolder.setOnClickListener {
-                val subjectDetails = subjects[adapterPosition].subjectDetails
+                val subjectDetails = subjects[adapterPosition].details
                 if (subjectDetails != null && subjectDetails.isNotEmpty()) {
                     val dialog = MaterialDialog(it.context, BottomSheet()).customView(R.layout.layout_subject_detail)
                     val dialogView = dialog.getCustomView()
@@ -52,7 +52,7 @@ class SubjectAdapter(private var subjects: List<Subject>) : RecyclerView.Adapter
                         subjectDetailHolder.addView(generateTextView(it.context, detail))
                     }
                     dialog.show {
-                        title(text = subjects[adapterPosition].subjectName)
+                        title(text = subjects[adapterPosition].name)
                     }
                 }
             }
@@ -60,45 +60,45 @@ class SubjectAdapter(private var subjects: List<Subject>) : RecyclerView.Adapter
 
         @SuppressLint("SetTextI18n")
         fun bind(subject: Subject) {
-            subjectName.text = subject.subjectName
+            subjectName.text = subject.name
             subjectName.isSelected = true
-            subjectTeacher.text = subject.subjectLecturer
-            subjectScore.text = if (subject.subjectScore > 0) {
-                if (subject.subjectScore.canBeInt())
-                    subject.subjectScore.toInt().toString()
+            subjectTeacher.text = subject.lecturer
+            subjectScore.text = if (subject.score > 0) {
+                if (subject.score.canBeInt())
+                    subject.score.toInt().toString()
                 else
-                    subject.subjectScore.toString()
-            } else if(subject.subjectFullScore > 0) {
-                if (subject.subjectFullScore.canBeInt())
-                    "0 (${subject.subjectFullScore.toInt()})"
+                    subject.score.toString()
+            } else if(subject.fullScore > 0) {
+                if (subject.fullScore.canBeInt())
+                    "0 (${subject.fullScore.toInt()})"
                 else
-                    "0 (${subject.subjectFullScore})"
+                    "0 (${subject.fullScore})"
             } else {
                 "0"
             }
-            subjectCredits.text = "კრედიტი: ${subject.subjectCredit}"
+            subjectCredits.text = "კრედიტი: ${subject.credit}"
         }
 
         @Suppress("IMPLICIT_CAST_TO_ANY")
         @SuppressLint("SetTextI18n")
         private fun generateTextView(context: Context, detail: SubjectDetail): View {
             val view = LayoutInflater.from(context).inflate(R.layout.layout_subject_detail_item, null)
-            view.subject_detail_name.text = detail.detailName
+            view.subject_detail_name.text = detail.name
             view.subject_detail_name.isSelected = true
-            if (detail.detailGrade != null) {
-                val gradeValue = if (detail.detailType == "group")
-                    if (detail.detailGrade.gradeMax.canBeInt())
-                        detail.detailGrade.gradeMax.toInt()
+            if (detail.grade != null) {
+                val gradeValue = if (detail.type == "group")
+                    if (detail.grade.maximumScore.canBeInt())
+                        detail.grade.maximumScore.toInt()
                     else
-                        detail.detailGrade.gradeMax
+                        detail.grade.maximumScore
                 else
-                    if (detail.detailGrade.gradeValue.canBeInt())
-                        detail.detailGrade.gradeValue.toInt()
+                    if (detail.grade.relativeScore.canBeInt())
+                        detail.grade.relativeScore.toInt()
                     else
-                        detail.detailGrade.gradeValue
-                view.subject_detail_result.text = "$gradeValue (${detail.detailMaxScore.toInt()}-დან)"
+                        detail.grade.relativeScore
+                view.subject_detail_result.text = "$gradeValue (${detail.maximalScore.toInt()}-დან)"
             } else {
-                view.subject_detail_result.text = "_ (${detail.detailMaxScore.toInt()}-დან)"
+                view.subject_detail_result.text = "_ (${detail.maximalScore.toInt()}-დან)"
             }
             return view
         }

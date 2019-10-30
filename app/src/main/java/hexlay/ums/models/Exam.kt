@@ -4,17 +4,17 @@ import com.google.gson.annotations.SerializedName
 
 data class Exam(
     @SerializedName("subject")
-    var examSubject: String,
+    var subject: String,
     @SerializedName("day")
-    var examDay: String,
+    var day: String,
     @SerializedName("time")
-    var examTime: String,
+    var time: String,
     @SerializedName("seat")
-    var examSeat: Int,
+    var seat: Int,
     @SerializedName("hall")
-    var examHall: String,
+    var hall: String,
     @SerializedName("status")
-    var examStatus: String,
+    var status: String,
     @SerializedName("canMove")
-    var examMovable: Boolean
+    var movable: Boolean
 )

@@ -6,7 +6,7 @@ data class NotificationBase(
     @SerializedName("docs")
     var notifications: List<Notification>,
     @SerializedName("pages")
-    var notificationMaxPages: Int,
+    var maxPages: Int,
     @SerializedName("page")
-    var notificationCurrentPage: Int
+    var currentPage: Int
 )

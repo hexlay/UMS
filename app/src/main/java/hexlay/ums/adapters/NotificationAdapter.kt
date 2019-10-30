@@ -29,7 +29,7 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
     }
 
     override fun onBindViewHolder(viewHolder: RViewHolder, position: Int) {
-        viewHolder.bind(notifications[position].notificationData)
+        viewHolder.bind(notifications[position].data)
     }
 
     override fun getItemCount(): Int = notifications.size
@@ -45,11 +45,11 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
                 val notification = notifications[adapterPosition]
                 val dialog = MaterialDialog(it.context, BottomSheet())
                 dialog.show {
-                    title(text = notification.notificationData.notificationDataTitle)
-                    message(text = notification.notificationData.notificationDataText.toHtml())
+                    title(text = notification.data.title)
+                    message(text = notification.data.text.toHtml())
                 }
-                if (notification.notificationState == "unread") {
-                    reference.get()!!.umsAPI.markNotification(id = notification.notificationId).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                if (notification.state == "unread") {
+                    reference.get()!!.umsAPI.markNotification(id = notification.id).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                         notifications.removeAt(adapterPosition)
                         notifyItemRemoved(adapterPosition)
                     }, { throwable ->
@@ -60,9 +60,9 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
         }
 
         fun bind(notification: NotificationData) {
-            notificationName.text = notification.notificationDataTitle
+            notificationName.text = notification.title
             notificationName.isSelected = true
-            notificationText.text = notification.notificationDataText.toHtml()
+            notificationText.text = notification.text.toHtml()
         }
 
     }

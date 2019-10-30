@@ -4,19 +4,19 @@ import com.google.gson.annotations.SerializedName
 
 data class Subject(
     @SerializedName("name")
-    var subjectName: String,
+    var name: String,
     @SerializedName("lecturer")
-    var subjectLecturer: String,
+    var lecturer: String,
     @SerializedName("score")
-    var subjectScore: Double,
+    var score: Double,
     @SerializedName("fullScore")
-    var subjectFullScore: Double,
+    var fullScore: Double,
     @SerializedName("credits")
-    var subjectCredit: Int,
+    var credit: Int,
     @SerializedName("semester")
-    var subjectSemester: Int,
+    var semester: Int,
     @SerializedName("state")
-    var subjectSemesterState: String,
+    var semesterState: String,
     @SerializedName("details")
-    var subjectDetails: List<SubjectDetail>
+    var details: List<SubjectDetail>
 )
