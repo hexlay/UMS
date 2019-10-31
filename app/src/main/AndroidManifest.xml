@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -27,6 +28,12 @@
         <activity
             android:name="hexlay.ums.activites.MainActivity"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name="hexlay.ums.services.NotificationService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"
+            android:enabled="true" />
 
     </application>
 

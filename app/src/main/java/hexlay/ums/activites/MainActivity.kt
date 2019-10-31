@@ -1,5 +1,9 @@
 package hexlay.ums.activites
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +16,9 @@ import hexlay.ums.fragments.*
 import hexlay.ums.helpers.AppHelper
 import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.setSize
+import hexlay.ums.services.NotificationService
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.intentFor
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         initToolbar()
         setupNavigationView()
         applyDayNight()
+        startSync()
     }
 
 
@@ -90,10 +97,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun exitMainActivity() {
-        val intent = Intent(this, StarterActivity::class.java)
+        val intent = intentFor<StarterActivity>()
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
         startActivity(intent)
         finish()
+    }
+
+    fun startSync() {
+        if (preferenceHelper.getNotifications) {
+            if (!appHelper.isSyncing) {
+                val jobService = ComponentName(this, NotificationService::class.java)
+                val syncInfo = JobInfo.Builder(0x1, jobService)
+                    .setPeriodic(14400000)
+                    .setPersisted(true)
+                    .build()
+                val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                scheduler.schedule(syncInfo)
+            }
+        }
+    }
+
+    fun stopSync() {
+        if (appHelper.isSyncing) {
+            val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            scheduler.cancel(0x1)
+        }
     }
 
 }

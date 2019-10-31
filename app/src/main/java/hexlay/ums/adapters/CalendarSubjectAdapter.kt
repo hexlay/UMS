@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import hexlay.ums.R
-import hexlay.ums.helpers.AppHelper
 import hexlay.ums.models.session.Session
 import kotlinx.android.extensions.LayoutContainer
 import java.text.SimpleDateFormat
@@ -47,13 +46,10 @@ class CalendarSubjectAdapter : RecyclerView.Adapter<CalendarSubjectAdapter.RView
         }
 
         private fun setTime(time: String) {
-            if (AppHelper.isPie) {
-                val inputFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.getDefault())
-                val outputFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-                subjectTime.text = outputFormatter.format(inputFormatter.parse(time)!!.time)
-            } else {
-                subjectTime.text = "TBA"
-            }
+            val inputFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormatter.timeZone = TimeZone.getTimeZone("UTC")
+            val outputFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+            subjectTime.text = outputFormatter.format(inputFormatter.parse(time)!!.time)
         }
 
     }

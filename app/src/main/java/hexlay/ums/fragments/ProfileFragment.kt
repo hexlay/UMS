@@ -154,7 +154,7 @@ class ProfileFragment : Fragment() {
             }
         }
         dark_mode.setOnClickListener {
-            val darkModeItems = mutableListOf("Bring the light", "Fall in the darkness", "Follow system")
+            val darkModeItems = mutableListOf("Just white", "Blackish", "Follow system")
             if (!AppHelper.isPie) {
                 darkModeItems.removeAt(2)
             }

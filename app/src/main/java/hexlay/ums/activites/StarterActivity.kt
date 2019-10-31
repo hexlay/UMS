@@ -15,6 +15,7 @@ import hexlay.ums.helpers.md5
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.layout_auth.*
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 class StarterActivity : AppCompatActivity() {
@@ -66,7 +67,7 @@ class StarterActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = intentFor<MainActivity>()
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
         startActivity(intent)
         finish()

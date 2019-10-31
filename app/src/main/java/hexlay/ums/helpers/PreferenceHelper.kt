@@ -24,11 +24,27 @@ class PreferenceHelper(context: Context) {
             }
         }
 
+    var getNotifications: Boolean
+        get() = settings.getBoolean("ums_get_notis", true)
+        set(value) {
+            settings.edit {
+                putBoolean("ums_get_notis", value)
+            }
+        }
+
     var passwordHash: String
         get() = settings.getString("ums_pwd_hash", "")!!
         set(value) {
             settings.edit {
                 putString("ums_pwd_hash", value)
+            }
+        }
+
+    var lastNotificationId: String
+        get() = settings.getString("ums_last_noti_id", "0")!!
+        set(value) {
+            settings.edit {
+                putString("ums_last_noti_id", value)
             }
         }
 

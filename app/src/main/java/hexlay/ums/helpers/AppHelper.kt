@@ -1,6 +1,8 @@
 package hexlay.ums.helpers
 
 import android.app.Activity
+import android.app.job.JobScheduler
+import android.content.Context.JOB_SCHEDULER_SERVICE
 import android.os.Build
 import android.view.View
 import java.lang.ref.WeakReference
@@ -23,6 +25,17 @@ class AppHelper(activity: Activity) {
             return dimension
         }
 
+    val isSyncing: Boolean
+        get() {
+            val scheduler = reference.get()!!.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+            for (jobInfo in scheduler.allPendingJobs) {
+                if (jobInfo.id == 0x1) {
+                    return true
+                }
+            }
+            return false
+        }
+
 
     fun dpOf(value: Int): Int {
         val scale = reference.get()!!.resources.displayMetrics.density
@@ -41,9 +54,6 @@ class AppHelper(activity: Activity) {
 
         val isPie: Boolean
             get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-
-        val isOreo: Boolean
-            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
         val isNougat: Boolean
             get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N

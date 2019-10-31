@@ -127,12 +127,14 @@ class CalendarFragment : Fragment() {
 
     @SuppressLint("CheckResult")
     private fun initSessions() {
-        (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
+        (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             savedSessions = it
             setContainers()
             setupCalendar()
             setupRecyclerView()
-        }
+        }, {
+            (reference.get()!!.application as UMS).handleError(it)
+        })
     }
 
 }

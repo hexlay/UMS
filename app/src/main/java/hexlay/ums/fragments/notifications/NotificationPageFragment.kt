@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +23,13 @@ class NotificationPageFragment : Fragment() {
 
     private lateinit var reference: WeakReference<MainActivity>
     private lateinit var notificationAdapter: NotificationAdapter
-    private lateinit var nType: String
+    private lateinit var notificationFragmentType: String
     private var page = 1
     private var maxPages = 1
     private var isWaiting = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        nType = arguments!!.getString("notification_type")!!
+        notificationFragmentType = arguments!!.getString("notification_type")!!
         return inflater.inflate(R.layout.fragment_notification_list, container, false)
     }
 
@@ -40,6 +41,19 @@ class NotificationPageFragment : Fragment() {
         notification_list_refresher.setOnRefreshListener {
             page = 1
             initNotifications()
+        }
+        if (notificationFragmentType == "unread") {
+            notification_list.setPadding(0, reference.get()!!.appHelper.actionBarSize, 0, notification_list.paddingBottom)
+            receive_notification.isVisible = true
+            receive_notification.isChecked = reference.get()!!.preferenceHelper.getNotifications
+            receive_notification.setOnCheckedChangeListener { _, isChecked ->
+                reference.get()!!.preferenceHelper.getNotifications = isChecked
+                if (isChecked) {
+                    reference.get()!!.startSync()
+                } else {
+                    reference.get()!!.stopSync()
+                }
+            }
         }
     }
 
@@ -74,7 +88,7 @@ class NotificationPageFragment : Fragment() {
 
     @SuppressLint("CheckResult")
     private fun initNotifications() {
-        (reference.get()!!.application as UMS).umsAPI.getNotifications(page = page.toString(), state = nType).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        (reference.get()!!.application as UMS).umsAPI.getNotifications(page = page.toString(), state = notificationFragmentType).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it != null) {
                 handleData(it)
             }
@@ -88,8 +102,15 @@ class NotificationPageFragment : Fragment() {
         isWaiting = true
         maxPages = data.maxPages
         page = data.currentPage
+        if (notifications_none.isVisible) {
+            notifications_none.isVisible = false
+        }
         if (page == 1) {
-            notificationAdapter.clearlyAddNotifications(data.notifications)
+            if (data.notifications.isNotEmpty()) {
+                notificationAdapter.clearlyAddNotifications(data.notifications)
+            } else {
+                notifications_none.isVisible = true
+            }
         } else {
             notificationAdapter.addNotifications(data.notifications)
         }

@@ -25,4 +25,16 @@
             android:paddingBottom="?actionBarSize" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/receive_notification"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:text="შეტყობინებები"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        android:paddingStart="15dp"
+        android:paddingEnd="10dp"
+        android:background="@color/transparent_95"
+        android:textColor="@color/color_primary"/>
+
 </FrameLayout>
