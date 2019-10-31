@@ -1,5 +1,6 @@
 package hexlay.ums.helpers
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.job.JobScheduler
 import android.content.Context.JOB_SCHEDULER_SERVICE
@@ -26,14 +27,19 @@ class AppHelper(activity: Activity) {
         }
 
     val isSyncing: Boolean
+        @SuppressLint("NewApi")
         get() {
             val scheduler = reference.get()!!.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-            for (jobInfo in scheduler.allPendingJobs) {
-                if (jobInfo.id == 0x1) {
-                    return true
+            if (isNougat) {
+                return scheduler.getPendingJob(0x1) != null
+            } else {
+                for (jobInfo in scheduler.allPendingJobs) {
+                    if (jobInfo.id == 0x1) {
+                        return true
+                    }
                 }
+                return false
             }
-            return false
         }
 
 
