@@ -21,7 +21,6 @@
 #-renamesourcefileattribute SourceFile
 -printmapping build/outputs/mapping/release/mapping.txt
 
--keepattributes SourceFile,LineNumberTable
 -keepattributes Signature
 -keepattributes *Annotation*
 
@@ -30,7 +29,6 @@
 -keep class * extends com.dbflow5.config.DatabaseHolder { *; }
 
 # Google
--keep class sun.misc.Unsafe { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
@@ -38,7 +36,6 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
--keep enum org.acra.** {*;}
 -keep interface okhttp3.** { *; }
 
 -dontwarn java.nio.file.*
@@ -46,4 +43,3 @@
 -dontwarn okio.**
 -dontwarn android.support.**
 -dontwarn okhttp3.**
--dontwarn sun.misc.**

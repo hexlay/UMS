@@ -32,10 +32,9 @@ class PreferenceHelper(context: Context) {
             }
         }
 
-    fun clear() {
-        settings.edit {
-            clear()
-        }
+    fun clearForLogout() {
+        connectId = ""
+        passwordHash = ""
     }
 
 }

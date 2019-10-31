@@ -2,7 +2,6 @@ package hexlay.ums.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -129,7 +128,6 @@ class CalendarFragment : Fragment() {
     @SuppressLint("CheckResult")
     private fun initSessions() {
         (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
-            Log.e("sessons", it.toString())
             savedSessions = it
             setContainers()
             setupCalendar()

@@ -10,7 +10,7 @@ android {
         applicationId "hexlay.ums"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 4
+        versionCode 5
         versionName "${getDate('M')}${getDate('d')}"
     }
     buildTypes {
@@ -51,7 +51,6 @@ static def getDate(String format) {
     new Date().format(format)
 }
 
-def acraVersion = '5.4.0'
 def dbFlowVersion = '5.0.0-alpha1'
 def retrofitVersion = '2.6.2'
 
@@ -91,17 +90,11 @@ dependencies {
     // Rx-Android
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    // ACRA
-    implementation "ch.acra:acra-mail:$acraVersion"
-    implementation "ch.acra:acra-toast:$acraVersion"
-
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
 
     // Un-categorized
-    implementation 'com.sun.mail:android-mail:1.6.4'
-    implementation 'com.sun.mail:android-activation:1.6.4'
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'
     implementation 'com.mikhaellopez:circularimageview:4.0.2'

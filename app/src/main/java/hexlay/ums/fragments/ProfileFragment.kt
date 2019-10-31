@@ -114,7 +114,7 @@ class ProfileFragment : Fragment() {
                         if (profile != null && profile.exists()) {
                             profile.delete()
                         }
-                        PreferenceHelper(context).clear()
+                        PreferenceHelper(context).clearForLogout()
                         reference.get()!!.exitMainActivity()
                     }, {
                         (reference.get()!!.application as UMS).handleError(it)
