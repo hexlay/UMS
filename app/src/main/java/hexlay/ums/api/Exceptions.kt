@@ -2,13 +2,13 @@ package hexlay.ums.api
 
 class AccessDeniedException : Exception() {
     override val message: String?
-        get() = "User is not allowed to request"
+        get() = "აუტორიზაციისას მოხდა შეცდომა"
 }
 class UnauthorizedException : Exception() {
     override val message: String?
-        get() = "User is unathorized"
+        get() = "გასაგრძელებლად საჭიროა აუტორიზაცია"
 }
 class NotFoundException : Exception() {
     override val message: String?
-        get() = "Unable to connect to server"
+        get() = "სერვერთან დაკავშირებისას მოხდა შეცდომა"
 }

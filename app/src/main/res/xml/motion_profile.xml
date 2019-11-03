@@ -24,8 +24,8 @@
             app:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@id/profile_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
             android:elevation="6dp"
@@ -82,9 +82,9 @@
             app:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@id/profile_image"
-            android:layout_width="93dp"
-            android:layout_height="93dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:elevation="6dp"
             app:layout_constraintStart_toStartOf="parent"

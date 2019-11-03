@@ -1,26 +1,24 @@
 package hexlay.ums.helpers
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.job.JobScheduler
+import android.content.Context
 import android.content.Context.JOB_SCHEDULER_SERVICE
+import android.net.NetworkCapabilities
 import android.os.Build
-import android.view.View
-import java.lang.ref.WeakReference
+import org.jetbrains.anko.connectivityManager
 
-class AppHelper(activity: Activity) {
-
-    private val reference: WeakReference<Activity> = WeakReference(activity)
+class AppHelper(val context: Context) {
 
     val statusBarHeight: Int
         get() {
-            val resourceId = reference.get()!!.resources.getIdentifier("status_bar_height", "dimen", "android")
-            return if (resourceId > 0) reference.get()!!.resources.getDimensionPixelSize(resourceId) else 0
+            val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            return if (resourceId > 0) context.resources.getDimensionPixelSize(resourceId) else 0
         }
 
     val actionBarSize: Int
         get() {
-            val styledAttributes = reference.get()!!.theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
+            val styledAttributes = context.theme.obtainStyledAttributes(intArrayOf(android.R.attr.actionBarSize))
             val dimension = styledAttributes.getDimension(0, 0F).toInt()
             styledAttributes.recycle()
             return dimension
@@ -29,7 +27,7 @@ class AppHelper(activity: Activity) {
     val isSyncing: Boolean
         @SuppressLint("NewApi")
         get() {
-            val scheduler = reference.get()!!.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+            val scheduler = context.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
             if (isNougat) {
                 return scheduler.getPendingJob(0x1) != null
             } else {
@@ -44,16 +42,14 @@ class AppHelper(activity: Activity) {
 
 
     fun dpOf(value: Int): Int {
-        val scale = reference.get()!!.resources.displayMetrics.density
+        val scale = context.resources.displayMetrics.density
         return (value * scale + 0.5f).toInt()
     }
 
-    fun makeFullscreen() {
-        val decorView = reference.get()!!.window.decorView
-        var flags = decorView.systemUiVisibility
-        flags = flags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        flags = flags or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        decorView.systemUiVisibility = flags
+    fun isNetworkAvailable(): Boolean {
+        val network = context.connectivityManager.activeNetwork
+        val capabilities = context.connectivityManager.getNetworkCapabilities(network)
+        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
 
     companion object {

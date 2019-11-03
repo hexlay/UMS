@@ -16,6 +16,7 @@ import hexlay.ums.R
 import hexlay.ums.activites.StarterActivity
 import hexlay.ums.api.AccessDeniedException
 import hexlay.ums.api.UmsAPI
+import hexlay.ums.api.UnauthorizedException
 import hexlay.ums.api.interceptors.AddCookiesInterceptor
 import hexlay.ums.api.interceptors.ConnectionInterceptor
 import hexlay.ums.api.interceptors.ReceivedCookiesInterceptor
@@ -96,10 +97,8 @@ class NotificationService : JobService() {
     }
 
     private fun handleError(error: Throwable) {
-        when (error) {
-            is AccessDeniedException -> {
-                preferenceHelper.clearForLogout()
-            }
+        if (error is AccessDeniedException || error is UnauthorizedException) {
+            preferenceHelper.clearForLogout()
         }
     }
 

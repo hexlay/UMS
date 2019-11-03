@@ -97,6 +97,6 @@ dependencies {
     // Un-categorized
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'
-    implementation 'com.mikhaellopez:circularimageview:4.0.2'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation "org.greenrobot:eventbus:3.1.1"
 }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
@@ -38,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        appHelper = AppHelper(this)
+        appHelper = AppHelper(baseContext)
         preferenceHelper = PreferenceHelper(baseContext)
-        appHelper.makeFullscreen()
+        makeFullscreen()
         registerConReceiver()
         initToolbar()
         setupNavigationView()
@@ -134,6 +135,14 @@ class MainActivity : AppCompatActivity() {
         filter.addAction("android.net.wifi.WIFI_STATE_CHANGED")
         filter.addAction("android.net.wifi.STATE_CHANGE")
         registerReceiver(connectivityReceiver, filter)
+    }
+
+    private fun makeFullscreen() {
+        val decorView = window.decorView
+        var flags = decorView.systemUiVisibility
+        flags = flags or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        flags = flags or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        decorView.systemUiVisibility = flags
     }
 
     override fun onDestroy() {

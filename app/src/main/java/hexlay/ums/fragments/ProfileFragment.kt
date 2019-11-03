@@ -113,12 +113,12 @@ class ProfileFragment : Fragment() {
         if (profile != null) {
             profile_name.text = "${profile.firstName} ${profile.lastName}"
             profile_status.text = profile.email
-            profile_image.setUrl(UmsAPI.BASE_URL + profile.photoUrl!!)
+            profile.photoUrl?.let {
+                profile_image.setUrl(UmsAPI.BASE_URL + it)
+            }
             if (profile.gender == "male") {
-                profile_image.shadowColor = Color.RED
                 profile_image.borderColor = Color.RED
             } else {
-                profile_image.shadowColor = Color.MAGENTA
                 profile_image.borderColor = Color.MAGENTA
             }
         }
@@ -181,6 +181,10 @@ class ProfileFragment : Fragment() {
                     reference.get()!!.applyDayNight()
                 }
             }
+        }
+        if (!reference.get()!!.appHelper.isNetworkAvailable()) {
+            edit_profile.hide()
+            logout.hide()
         }
     }
 

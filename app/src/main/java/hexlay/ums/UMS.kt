@@ -41,7 +41,7 @@ class UMS : Application() {
     }
 
     private fun initAPI() {
-        val cache = Cache(cacheDir, (5 * 1024 * 1024).toLong())
+        val cache = Cache(cacheDir, (5 * 1024 * 1024).toLong()) // 5mb
         val client = OkHttpClient.Builder()
             .addInterceptor(ConnectionInterceptor(this))
             .addInterceptor(AddCookiesInterceptor(this))
