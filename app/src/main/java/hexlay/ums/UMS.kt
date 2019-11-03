@@ -7,15 +7,15 @@ import com.dbflow5.config.FlowManager
 import com.dbflow5.database.AndroidSQLiteOpenHelper
 import com.google.gson.GsonBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
-import hexlay.ums.api.ForbiddenException
-import hexlay.ums.api.NoConnectivityException
-import hexlay.ums.api.NotFoundException
+import hexlay.ums.api.AccessDeniedException
 import hexlay.ums.api.UmsAPI
+import hexlay.ums.api.UnauthorizedException
 import hexlay.ums.api.interceptors.AddCookiesInterceptor
-import hexlay.ums.api.interceptors.ErrorInterceptor
+import hexlay.ums.api.interceptors.ConnectionInterceptor
 import hexlay.ums.api.interceptors.ReceivedCookiesInterceptor
 import hexlay.ums.database.UmsDatabase
 import hexlay.ums.helpers.PreferenceHelper
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.toast
 import retrofit2.Retrofit
@@ -33,16 +33,20 @@ class UMS : Application() {
         super.onCreate()
         AndroidThreeTen.init(this)
         initAPI()
-        FlowManager.init(FlowConfig.Builder(this)
-            .database(DatabaseConfig.builder(UmsDatabase::class, sqlLiteHelper).databaseName(UmsDatabase.NAME).build())
-            .build())
+        FlowManager.init(
+            FlowConfig.Builder(this)
+                .database(DatabaseConfig.builder(UmsDatabase::class, sqlLiteHelper).databaseName(UmsDatabase.NAME).build())
+                .build()
+        )
     }
 
     private fun initAPI() {
+        val cache = Cache(cacheDir, (5 * 1024 * 1024).toLong())
         val client = OkHttpClient.Builder()
-            .addInterceptor(ErrorInterceptor(this))
+            .addInterceptor(ConnectionInterceptor(this))
             .addInterceptor(AddCookiesInterceptor(this))
             .addInterceptor(ReceivedCookiesInterceptor(this))
+            .cache(cache)
             .build()
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
@@ -56,14 +60,10 @@ class UMS : Application() {
     }
 
     fun handleError(error: Throwable) {
-        when(error) {
-            is ForbiddenException -> {
-                PreferenceHelper(baseContext).clearForLogout()
-                toast("აუტორიზაციისას მოხდა შეცდომა")
-            }
-            is NoConnectivityException -> toast("ვერ მოხერხდა ინტერნეტთან დაკავშირება")
-            is NotFoundException -> toast("API მისამართი ვერ მოიძებნა")
+        if (error is AccessDeniedException || error is UnauthorizedException) {
+            PreferenceHelper(baseContext).clearForLogout()
         }
+        toast(error.message!!)
     }
 
     override fun onTerminate() {

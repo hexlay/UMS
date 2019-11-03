@@ -28,6 +28,12 @@
 -keep class okhttp3.** { *; }
 -keep class * extends com.dbflow5.config.DatabaseHolder { *; }
 
+# EventBus
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
 # Google
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer

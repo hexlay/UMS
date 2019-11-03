@@ -1,6 +1,5 @@
 package hexlay.ums.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +23,7 @@ import hexlay.ums.models.session.Session
 import hexlay.ums.views.DayViewContainer
 import hexlay.ums.views.MonthViewContainer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import org.threeten.bp.DayOfWeek
@@ -37,12 +37,14 @@ class CalendarFragment : Fragment() {
     private lateinit var reference: WeakReference<MainActivity>
     private lateinit var calendarSubjectAdapter: CalendarSubjectAdapter
     private lateinit var savedSessions: List<Session>
+    private lateinit var disposable: CompositeDisposable
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        disposable = CompositeDisposable()
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
@@ -125,16 +127,23 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    @SuppressLint("CheckResult")
     private fun initSessions() {
-        (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
-            savedSessions = it
-            setContainers()
-            setupCalendar()
-            setupRecyclerView()
+        val method = (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+            if (it.isNotEmpty()) {
+                savedSessions = it
+                setContainers()
+                setupCalendar()
+                setupRecyclerView()
+            }
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+        disposable.add(method)
+    }
+
+    override fun onDestroyView() {
+        disposable.dispose()
+        super.onDestroyView()
     }
 
 }

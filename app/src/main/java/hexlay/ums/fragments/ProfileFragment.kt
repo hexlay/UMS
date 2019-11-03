@@ -25,22 +25,29 @@ import hexlay.ums.api.UmsAPI
 import hexlay.ums.fragments.sections.SemesterSection
 import hexlay.ums.helpers.*
 import hexlay.ums.models.Profile
+import hexlay.ums.services.events.ConnectedSuccessEvent
+import hexlay.ums.services.events.ConnectedUnSuccessEvent
+import hexlay.ums.services.events.Event
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.layout_change_profile.*
 import kotlinx.android.synthetic.main.layout_profile_totals.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.support.v4.toast
 import java.lang.ref.WeakReference
 
-@SuppressLint("CheckResult")
 class ProfileFragment : Fragment() {
 
     private lateinit var reference: WeakReference<MainActivity>
     private lateinit var semesterAdapter: SectionedRecyclerViewAdapter
+    private lateinit var disposable: CompositeDisposable
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        disposable = CompositeDisposable()
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
@@ -49,13 +56,20 @@ class ProfileFragment : Fragment() {
         reference = WeakReference(activity as MainActivity)
         semesterAdapter = SectionedRecyclerViewAdapter()
         all_semester_subjects.layoutManager = LinearLayoutManager(context)
+        initEvents()
         initSubjects()
         initProfile()
         initTotals()
     }
 
+    private fun initEvents() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+    }
+
     private fun initSubjects() {
-        (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
                 all_semester_subjects_loader.isGone = true
                 val creditsSum = it.filter { sItSem -> sItSem.semesterState == "passed" }.sumBy { sItCred -> sItCred.credit }
@@ -71,12 +85,13 @@ class ProfileFragment : Fragment() {
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+        disposable.add(method)
     }
 
     private fun initPreviousCourseSubjects() {
         val profile = (select from Profile::class).result
         if (profile?.id != null) {
-            (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjectsPrevijous(profile.id!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+            val method = (reference.get()!!.application as UMS).umsAPI.getTotalStudentSubjectsPrevijous(profile.id!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                 if (it.isNotEmpty()) {
                     val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.semester }).groupBy { gIt -> gIt.semester }
                     for ((key, value) in subjectMap) {
@@ -88,10 +103,11 @@ class ProfileFragment : Fragment() {
             }, {
                 (reference.get()!!.application as UMS).handleError(it)
             })
+            disposable.add(method)
         }
     }
 
-    @SuppressLint("CheckResult", "SetTextI18n")
+    @SuppressLint("SetTextI18n")
     private fun initProfile() {
         val profile = (select from Profile::class).result
         if (profile != null) {
@@ -168,9 +184,8 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    @SuppressLint("CheckResult")
     private fun initTotals() {
-        (reference.get()!!.application as UMS).umsAPI.getStudentTotals().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference.get()!!.application as UMS).umsAPI.getStudentTotals().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it != null) {
                 total_progress_holder.addView(generateTotalsView(it.currentAverage, 100))
                 total_progress_holder.addView(generateTotalsView(it.currentGpa, 4))
@@ -178,14 +193,36 @@ class ProfileFragment : Fragment() {
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+        disposable.add(method)
     }
 
+    @SuppressLint("InflateParams")
     private fun generateTotalsView(data: Double, max: Int): View {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_profile_totals, null)
         view.total_progress.max = max
         view.total_progress.progress = data.toInt()
         view.total_progress_text.text = if (data.canBeInt()) data.toInt().toString() else data.toString()
         return view
+    }
+
+    @Subscribe
+    fun onEvent(event: Event) {
+        when (event) {
+            is ConnectedSuccessEvent -> {
+                edit_profile.show()
+                logout.show()
+            }
+            is ConnectedUnSuccessEvent -> {
+                edit_profile.hide()
+                logout.hide()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        EventBus.getDefault().unregister(this)
+        disposable.dispose()
+        super.onDestroyView()
     }
 
 }

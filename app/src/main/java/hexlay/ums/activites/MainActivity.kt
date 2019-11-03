@@ -5,6 +5,7 @@ import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,6 +17,7 @@ import hexlay.ums.fragments.*
 import hexlay.ums.helpers.AppHelper
 import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.setSize
+import hexlay.ums.services.ConnectivityReceiver
 import hexlay.ums.services.NotificationService
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.intentFor
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var preferenceHelper: PreferenceHelper
         private set
     private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private lateinit var connectivityReceiver: ConnectivityReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         appHelper = AppHelper(this)
         preferenceHelper = PreferenceHelper(baseContext)
         appHelper.makeFullscreen()
+        registerConReceiver()
         initToolbar()
         setupNavigationView()
         applyDayNight()
@@ -122,6 +126,19 @@ class MainActivity : AppCompatActivity() {
             val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             scheduler.cancel(0x1)
         }
+    }
+
+    private fun registerConReceiver() {
+        connectivityReceiver = ConnectivityReceiver()
+        val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+        filter.addAction("android.net.wifi.WIFI_STATE_CHANGED")
+        filter.addAction("android.net.wifi.STATE_CHANGE")
+        registerReceiver(connectivityReceiver, filter)
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(connectivityReceiver)
+        super.onDestroy()
     }
 
 }

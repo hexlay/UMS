@@ -1,6 +1,5 @@
 package hexlay.ums.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +13,7 @@ import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.ExamAdapter
 import hexlay.ums.helpers.setMargins
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_score.*
 import java.lang.ref.WeakReference
@@ -21,8 +21,10 @@ import java.lang.ref.WeakReference
 class ExamFragment : Fragment() {
 
     private lateinit var reference: WeakReference<MainActivity>
+    private lateinit var disposable: CompositeDisposable
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        disposable = CompositeDisposable()
         return inflater.inflate(R.layout.fragment_score, container, false)
     }
 
@@ -38,9 +40,8 @@ class ExamFragment : Fragment() {
         initExams()
     }
 
-    @SuppressLint("CheckResult")
     private fun initExams() {
-        (reference.get()!!.application as UMS).umsAPI.getStudentExams().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference.get()!!.application as UMS).umsAPI.getStudentExams().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
                 score_list_loader.isGone = true
                 score_list.adapter = ExamAdapter(it)
@@ -51,6 +52,12 @@ class ExamFragment : Fragment() {
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+        disposable.add(method)
+    }
+
+    override fun onDestroyView() {
+        disposable.dispose()
+        super.onDestroyView()
     }
 
 }

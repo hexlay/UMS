@@ -2,25 +2,28 @@ package hexlay.ums.api.interceptors
 
 import android.content.Context
 import android.net.NetworkCapabilities
-import hexlay.ums.api.ForbiddenException
-import hexlay.ums.api.NoConnectivityException
+import hexlay.ums.api.AccessDeniedException
 import hexlay.ums.api.NotFoundException
+import hexlay.ums.api.UnauthorizedException
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.jetbrains.anko.connectivityManager
-import java.io.IOException
 
-class ErrorInterceptor(private val context: Context) : Interceptor {
+class ConnectionInterceptor(private val context: Context) : Interceptor {
 
-    @Throws(IOException::class)
+    @Throws(Exception::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (!isNetworkAvailable()) {
-            throw NoConnectivityException()
+        var request = chain.request()
+        request = if (isNetworkAvailable()) {
+            request.newBuilder().build()
+        } else {
+            val sevenDay = 60 * 60 * 24 * 7
+            request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=${sevenDay}").build()
         }
-        val builder = chain.request().newBuilder()
-        val response = chain.proceed(builder.build())
+        val response = chain.proceed(request)
         when (response.code) {
-            403 -> throw ForbiddenException()
+            401 -> throw UnauthorizedException()
+            403 -> throw AccessDeniedException()
             404 -> throw NotFoundException()
         }
         return response

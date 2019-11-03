@@ -1,7 +1,14 @@
 package hexlay.ums.api
 
-import java.io.IOException
-
-class NoConnectivityException : IOException()
-class ForbiddenException : IOException()
-class NotFoundException : IOException()
+class AccessDeniedException : Exception() {
+    override val message: String?
+        get() = "User is not allowed to request"
+}
+class UnauthorizedException : Exception() {
+    override val message: String?
+        get() = "User is unathorized"
+}
+class NotFoundException : Exception() {
+    override val message: String?
+        get() = "Unable to connect to server"
+}

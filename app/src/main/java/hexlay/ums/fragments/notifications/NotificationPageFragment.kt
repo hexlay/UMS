@@ -1,6 +1,5 @@
 package hexlay.ums.fragments.notifications
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +14,7 @@ import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.NotificationAdapter
 import hexlay.ums.models.notifications.NotificationBase
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_notification_list.*
 import java.lang.ref.WeakReference
@@ -24,12 +24,15 @@ class NotificationPageFragment : Fragment() {
     private lateinit var reference: WeakReference<MainActivity>
     private lateinit var notificationAdapter: NotificationAdapter
     private lateinit var notificationFragmentType: String
+    private lateinit var disposable: CompositeDisposable
+
     private var page = 1
     private var maxPages = 1
     private var isWaiting = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         notificationFragmentType = arguments!!.getString("notification_type")!!
+        disposable = CompositeDisposable()
         return inflater.inflate(R.layout.fragment_notification_list, container, false)
     }
 
@@ -86,9 +89,8 @@ class NotificationPageFragment : Fragment() {
         })
     }
 
-    @SuppressLint("CheckResult")
     private fun initNotifications() {
-        (reference.get()!!.application as UMS).umsAPI.getNotifications(page = page.toString(), state = notificationFragmentType).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference.get()!!.application as UMS).umsAPI.getNotifications(page = page.toString(), state = notificationFragmentType).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it != null) {
                 handleData(it)
             }
@@ -96,6 +98,7 @@ class NotificationPageFragment : Fragment() {
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })
+        disposable.add(method)
     }
 
     private fun handleData(data: NotificationBase) {
@@ -115,6 +118,11 @@ class NotificationPageFragment : Fragment() {
             notificationAdapter.addNotifications(data.notifications)
         }
         page++
+    }
+
+    override fun onDestroyView() {
+        disposable.dispose()
+        super.onDestroyView()
     }
 
     companion object {

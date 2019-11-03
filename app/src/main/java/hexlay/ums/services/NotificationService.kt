@@ -14,10 +14,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.GsonBuilder
 import hexlay.ums.R
 import hexlay.ums.activites.StarterActivity
-import hexlay.ums.api.ForbiddenException
+import hexlay.ums.api.AccessDeniedException
 import hexlay.ums.api.UmsAPI
 import hexlay.ums.api.interceptors.AddCookiesInterceptor
-import hexlay.ums.api.interceptors.ErrorInterceptor
+import hexlay.ums.api.interceptors.ConnectionInterceptor
 import hexlay.ums.api.interceptors.ReceivedCookiesInterceptor
 import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.toHtml
@@ -43,7 +43,7 @@ class NotificationService : JobService() {
     override fun onCreate() {
         super.onCreate()
         val client = OkHttpClient.Builder()
-            .addInterceptor(ErrorInterceptor(applicationContext))
+            .addInterceptor(ConnectionInterceptor(applicationContext))
             .addInterceptor(AddCookiesInterceptor(applicationContext))
             .addInterceptor(ReceivedCookiesInterceptor(applicationContext))
             .build()
@@ -97,7 +97,7 @@ class NotificationService : JobService() {
 
     private fun handleError(error: Throwable) {
         when (error) {
-            is ForbiddenException -> {
+            is AccessDeniedException -> {
                 preferenceHelper.clearForLogout()
             }
         }

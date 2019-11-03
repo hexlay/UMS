@@ -10,7 +10,7 @@ android {
         applicationId "hexlay.ums"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 5
+        versionCode 7
         versionName "${getDate('M')}${getDate('d')}"
     }
     buildTypes {
@@ -98,4 +98,5 @@ dependencies {
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'
     implementation 'com.mikhaellopez:circularimageview:4.0.2'
+    implementation "org.greenrobot:eventbus:3.1.1"
 }
