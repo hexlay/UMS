@@ -11,3 +11,16 @@
 - ნახოთ და წაიკითხოთ შეტყობინებები
 - ნახოთ GPA, კრედიტების ჯამი და ა.შ
 - შეცვალოთ პაროლი
+
+# 3rd party libraries used
+- <a href="https://github.com/Kotlin/anko">Anko</a>
+- <a href="https://github.com/agrosner/DBFlow">DBFlow</a>
+- <a href="https://github.com/square/retrofit">Retrofit 2</a>
+- <a href="https://github.com/square/okhttp">OkHttp 3</a>
+- <a href="https://github.com/ReactiveX/RxAndroid">RxAndroid</a>
+- <a href="https://github.com/google/gson">Gson</a>
+- <a href="https://github.com/hdodenhof/CircleImageView">CircularImageView</a>
+- <a href="https://github.com/bumptech/glide">Glide</a>
+- <a href="https://github.com/afollestad/material-dialogs">Material Dialogs</a>
+- <a href="https://github.com/luizgrp/SectionedRecyclerViewAdapter">SectionedRecyclerViewAdapter</a>
+- <a href="https://github.com/greenrobot/EventBus">EventBus</a>
