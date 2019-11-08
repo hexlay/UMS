@@ -1,7 +1,10 @@
 package hexlay.ums.models.notifications
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class NotificationData(
     @SerializedName("text")
     var text: String,
@@ -9,4 +12,4 @@ data class NotificationData(
     var title: String,
     @SerializedName("createDateString")
     var createdDate: String
-)
+) : Parcelable

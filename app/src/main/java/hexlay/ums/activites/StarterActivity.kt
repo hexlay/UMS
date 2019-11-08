@@ -1,6 +1,5 @@
 package hexlay.ums.activites
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
@@ -16,6 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.layout_auth.*
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.noAnimation
 import org.jetbrains.anko.toast
 
 class StarterActivity : AppCompatActivity() {
@@ -67,9 +67,11 @@ class StarterActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity() {
-        val intent = intentFor<MainActivity>()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-        startActivity(intent)
+        val activityIntent = intentFor<MainActivity>().noAnimation()
+        if (intent.extras != null && !intent.extras!!.isEmpty) {
+            activityIntent.putExtras(intent.extras!!)
+        }
+        startActivity(activityIntent)
         finish()
     }
 

@@ -105,6 +105,7 @@ class NotificationService : JobService() {
     private fun showNotification(notification: Notification) {
         val notificationId = generateId(notification.id)
         val intent = intentFor<StarterActivity>()
+        intent.putExtra("notification", notification)
         val pendingIntent = PendingIntent.getActivity(applicationContext, notificationId, intent, 0)
         val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(notification.data.title)

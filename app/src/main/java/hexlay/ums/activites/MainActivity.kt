@@ -4,7 +4,6 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
@@ -12,16 +11,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import hexlay.ums.R
+import hexlay.ums.UMS
 import hexlay.ums.adapters.ViewPagerAdapter
 import hexlay.ums.fragments.*
 import hexlay.ums.helpers.AppHelper
 import hexlay.ums.helpers.PreferenceHelper
 import hexlay.ums.helpers.setSize
+import hexlay.ums.helpers.toHtml
+import hexlay.ums.models.notifications.Notification
 import hexlay.ums.services.ConnectivityReceiver
 import hexlay.ums.services.NotificationService
+import hexlay.ums.services.events.NotificationRemoveEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.noAnimation
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,9 +41,11 @@ class MainActivity : AppCompatActivity() {
         private set
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var connectivityReceiver: ConnectivityReceiver
+    private lateinit var disposable: CompositeDisposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        disposable = CompositeDisposable()
         setContentView(R.layout.activity_main)
         init()
     }
@@ -47,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         setupNavigationView()
         applyDayNight()
         startSync()
+        checkForStarterData()
     }
 
 
@@ -102,10 +115,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun exitMainActivity() {
-        val intent = intentFor<StarterActivity>()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-        startActivity(intent)
+        startActivity(intentFor<StarterActivity>().noAnimation())
         finish()
+    }
+
+    private fun checkForStarterData() {
+        if (intent.extras != null && !intent.extras!!.isEmpty) {
+            if (intent.hasExtra("notification")) {
+                val notification = intent.getParcelableExtra("notification") as Notification
+                val dialog = MaterialDialog(this, BottomSheet())
+                dialog.show {
+                    title(text = notification.data.title)
+                    message(text = notification.data.text.toHtml())
+                }
+                if (notification.state == "unread") {
+                    val method = (application as UMS).umsAPI.markNotification(id = notification.id).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                        EventBus.getDefault().post(NotificationRemoveEvent(notification))
+                    }, { throwable ->
+                        (application as UMS).handleError(throwable)
+                    })
+                    disposable.add(method)
+                }
+            }
+        }
     }
 
     fun startSync() {
@@ -147,6 +179,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         unregisterReceiver(connectivityReceiver)
+        disposable.dispose()
         super.onDestroy()
     }
 

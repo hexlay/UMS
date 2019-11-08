@@ -13,10 +13,14 @@ import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.NotificationAdapter
 import hexlay.ums.models.notifications.NotificationBase
+import hexlay.ums.services.events.Event
+import hexlay.ums.services.events.NotificationRemoveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_notification_list.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.lang.ref.WeakReference
 
 class NotificationPageFragment : Fragment() {
@@ -41,6 +45,7 @@ class NotificationPageFragment : Fragment() {
         reference = WeakReference(activity as MainActivity)
         initRecyclerView()
         initNotifications()
+        initEvents()
         notification_list_refresher.setOnRefreshListener {
             page = 1
             initNotifications()
@@ -57,6 +62,12 @@ class NotificationPageFragment : Fragment() {
                     reference.get()!!.stopSync()
                 }
             }
+        }
+    }
+
+    private fun initEvents() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
         }
     }
 
@@ -120,7 +131,17 @@ class NotificationPageFragment : Fragment() {
         page++
     }
 
+    @Subscribe
+    fun onEvent(event: Event) {
+        when (event) {
+            is NotificationRemoveEvent -> {
+                notificationAdapter.removeNotification(event.notification)
+            }
+        }
+    }
+
     override fun onDestroyView() {
+        EventBus.getDefault().unregister(this)
         disposable.dispose()
         super.onDestroyView()
     }

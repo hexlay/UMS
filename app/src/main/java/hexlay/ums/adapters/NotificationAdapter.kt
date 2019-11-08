@@ -78,4 +78,10 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
         notifyDataSetChanged()
     }
 
+    fun removeNotification(notification: Notification) {
+        val position = notifications.indexOf(notification)
+        notifications.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
 }

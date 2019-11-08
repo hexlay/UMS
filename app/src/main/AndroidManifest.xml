@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="hexlay.ums">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,7 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name="hexlay.ums.UMS"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:hasFragileUserData="true"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        tools:targetApi="q">
 
         <activity
             android:name="hexlay.ums.activites.StarterActivity"

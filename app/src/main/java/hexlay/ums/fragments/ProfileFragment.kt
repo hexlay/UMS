@@ -21,8 +21,8 @@ import com.google.android.material.textfield.TextInputEditText
 import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
+import hexlay.ums.adapters.sections.SemesterSection
 import hexlay.ums.api.UmsAPI
-import hexlay.ums.fragments.sections.SemesterSection
 import hexlay.ums.helpers.*
 import hexlay.ums.models.Profile
 import hexlay.ums.services.events.ConnectedSuccessEvent

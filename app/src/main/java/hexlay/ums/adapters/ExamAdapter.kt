@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import hexlay.ums.R
+import hexlay.ums.helpers.toHtml
 import hexlay.ums.models.Exam
 import kotlinx.android.extensions.LayoutContainer
 
@@ -40,10 +41,10 @@ class ExamAdapter(private val exams: List<Exam>) : RecyclerView.Adapter<ExamAdap
                 exam.hall
             else
                 "${exam.hall} აუდიტორია"
-            examInfo.text = if (exam.seat > 0 )
-                "${examDay}, $examHall - ${exam.seat}"
+            examInfo.text = if (exam.seat > 0)
+                "<b>${examDay}</b>, $examHall - ${exam.seat}".toHtml()
             else
-                "${examDay}, $examHall"
+                "<b>${examDay}</b>, $examHall".toHtml()
         }
 
     }

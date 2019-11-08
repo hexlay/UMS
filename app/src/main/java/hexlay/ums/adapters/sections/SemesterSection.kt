@@ -1,4 +1,4 @@
-package hexlay.ums.fragments.sections
+package hexlay.ums.adapters.sections
 
 import android.annotation.SuppressLint
 import android.content.Context
