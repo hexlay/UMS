@@ -15,7 +15,7 @@ import hexlay.ums.helpers.setMargins
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
-import kotlinx.android.synthetic.main.fragment_score.*
+import kotlinx.android.synthetic.main.fragment_exams.*
 import java.lang.ref.WeakReference
 
 class ExamFragment : Fragment() {
@@ -25,30 +25,25 @@ class ExamFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
-        return inflater.inflate(R.layout.fragment_score, container, false)
+        return inflater.inflate(R.layout.fragment_exams, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         reference = WeakReference(activity as MainActivity)
-        semester_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
-        semester_header.text = getString(R.string.current_exams)
-        score_list.layoutManager = LinearLayoutManager(context)
-        score_list_refresher.setOnRefreshListener {
-            initExams()
-        }
+        exam_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
+        exam_list.layoutManager = LinearLayoutManager(context)
         initExams()
     }
 
     private fun initExams() {
         val method = (reference.get()!!.application as UMS).umsAPI.getStudentExams().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
-                score_list_loader.isGone = true
-                score_list.adapter = ExamAdapter(it)
+                exam_list_loader.isGone = true
+                exam_list.adapter = ExamAdapter(it)
             } else {
                 reference.get()!!.disableExams()
             }
-            score_list_refresher.isRefreshing = false
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })

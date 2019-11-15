@@ -3,6 +3,8 @@ package hexlay.ums.models.subject
 import com.google.gson.annotations.SerializedName
 
 data class Subject(
+    @SerializedName("_id")
+    var id: String,
     @SerializedName("name")
     var name: String,
     @SerializedName("lecturer")

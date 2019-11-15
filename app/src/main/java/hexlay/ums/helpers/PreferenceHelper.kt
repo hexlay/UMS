@@ -32,6 +32,14 @@ class PreferenceHelper(context: Context) {
             }
         }
 
+    var getNotificationsScore: Boolean
+        get() = settings.getBoolean("ums_get_notis_score", true)
+        set(value) {
+            settings.edit {
+                putBoolean("ums_get_notis_score", value)
+            }
+        }
+
     var passwordHash: String
         get() = settings.getString("ums_pwd_hash", "")!!
         set(value) {
@@ -47,6 +55,16 @@ class PreferenceHelper(context: Context) {
                 putString("ums_last_noti_id", value)
             }
         }
+
+    fun putCustom(id: String, value: String) {
+        settings.edit {
+            putString(id, value)
+        }
+    }
+
+    fun getCustom(id: String): String {
+        return settings.getString(id, "0")!!
+    }
 
     fun clearForLogout() {
         connectId = ""

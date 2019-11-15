@@ -37,6 +37,7 @@ class ScoreFragment : Fragment() {
             initSubjects()
         }
         initSubjects()
+        initNotificationCheck()
     }
 
     private fun initSubjects() {
@@ -50,6 +51,18 @@ class ScoreFragment : Fragment() {
             (reference.get()!!.application as UMS).handleError(it)
         })
         disposable.add(method)
+    }
+
+    private fun initNotificationCheck() {
+        receive_notification_scores.isChecked = reference.get()!!.preferenceHelper.getNotificationsScore
+        receive_notification_scores.setOnCheckedChangeListener { _, isChecked ->
+            reference.get()!!.preferenceHelper.getNotificationsScore = isChecked
+            if (isChecked) {
+                reference.get()!!.startScoreJob()
+            } else {
+                reference.get()!!.stopJob(0x2)
+            }
+        }
     }
 
     override fun onDestroyView() {

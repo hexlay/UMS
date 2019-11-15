@@ -17,8 +17,8 @@ class ConnectionInterceptor(private val context: Context) : Interceptor {
         request = if (isNetworkAvailable()) {
             request.newBuilder().build()
         } else {
-            val sevenDay = 60 * 60 * 24 * 7
-            request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=${sevenDay}").build()
+            //val sevenDay = 60 * 60 * 24 * 7
+            request.newBuilder().header("Cache-Control", "public, only-if-cached, max-stale=604800").build()
         }
         val response = chain.proceed(request)
         when (response.code) {

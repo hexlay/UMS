@@ -24,22 +24,20 @@ class AppHelper(val context: Context) {
             return dimension
         }
 
-    val isSyncing: Boolean
-        @SuppressLint("NewApi")
-        get() {
-            val scheduler = context.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-            if (isNougat) {
-                return scheduler.getPendingJob(0x1) != null
-            } else {
-                for (jobInfo in scheduler.allPendingJobs) {
-                    if (jobInfo.id == 0x1) {
-                        return true
-                    }
+    @SuppressLint("NewApi")
+    fun isJobScheduled(jobId: Int): Boolean {
+        val scheduler = context.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+        if (isNougat) {
+            return scheduler.getPendingJob(jobId) != null
+        } else {
+            for (jobInfo in scheduler.allPendingJobs) {
+                if (jobInfo.id == jobId) {
+                    return true
                 }
-                return false
             }
+            return false
         }
-
+    }
 
     fun dpOf(value: Int): Int {
         val scale = context.resources.displayMetrics.density

@@ -2,11 +2,10 @@ package hexlay.ums.activites
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.dbflow5.structure.insert
-import com.google.android.material.textfield.TextInputEditText
 import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.helpers.PreferenceHelper
@@ -33,9 +32,6 @@ class StarterActivity : AppCompatActivity() {
             startMainActivity()
         } else {
             val dialog = MaterialDialog(this).customView(R.layout.layout_auth)
-            val dialogView = dialog.getCustomView()
-            val email = dialogView.findViewById<TextInputEditText>(R.id.email)
-            val password = dialogView.findViewById<TextInputEditText>(R.id.password)
             dialog.show {
                 title(R.string.auth_title)
                 noAutoDismiss()
@@ -48,6 +44,7 @@ class StarterActivity : AppCompatActivity() {
                         email_input.error = resources.getString(R.string.auth_empty)
                         password_input.error = resources.getString(R.string.auth_empty)
                     } else {
+                        auth_loading.isVisible = true
                         (application as UMS).umsAPI.login(emailText, passwordText).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                             if (it != null) {
                                 it.insert()
@@ -57,6 +54,7 @@ class StarterActivity : AppCompatActivity() {
                             } else {
                                 toast(R.string.auth_error)
                             }
+                            auth_loading.isVisible = false
                         }, {
                             (application as UMS).handleError(it)
                         })

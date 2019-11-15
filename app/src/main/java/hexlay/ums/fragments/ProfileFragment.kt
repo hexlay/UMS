@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.dbflow5.query.result
 import com.dbflow5.query.select
 import com.dbflow5.structure.delete
 import com.dbflow5.structure.exists
-import com.google.android.material.textfield.TextInputEditText
 import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
@@ -141,15 +140,12 @@ class ProfileFragment : Fragment() {
         }
         edit_profile.setOnClickListener {
             val dialog = MaterialDialog(context!!).customView(R.layout.layout_change_profile)
-            val dialogView = dialog.getCustomView()
-            val oldPassword = dialogView.findViewById<TextInputEditText>(R.id.old_password)
-            val newPassword = dialogView.findViewById<TextInputEditText>(R.id.new_password)
             dialog.show {
                 title(R.string.profile_edit)
                 noAutoDismiss()
                 positiveButton(R.string.profile_change_submit) {
-                    val oldPasswordText = oldPassword.text.toString()
-                    val newPasswordText = newPassword.text.toString()
+                    val oldPasswordText = old_password.text.toString()
+                    val newPasswordText = new_password.text.toString()
                     when {
                         oldPasswordText.isEmpty() or newPasswordText.isEmpty() -> {
                             current_password_input.error = resources.getString(R.string.auth_empty)
@@ -157,9 +153,11 @@ class ProfileFragment : Fragment() {
                         }
                         oldPasswordText.md5() != reference.get()!!.preferenceHelper.passwordHash -> current_password_input.error = resources.getString(R.string.profile_change_password_error)
                         else -> {
+                            profile_change_loading.isVisible = true
                             (reference.get()!!.application as UMS).umsAPI.passwordChange(newPasswordText).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                                 reference.get()!!.preferenceHelper.passwordHash = newPasswordText.md5()
                                 toast(R.string.profile_change_success)
+                                profile_change_loading.isVisible = false
                                 dialog.dismiss()
                             }, {
                                 (reference.get()!!.application as UMS).handleError(it)

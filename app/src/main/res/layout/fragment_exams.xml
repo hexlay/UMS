@@ -6,11 +6,11 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/semester_header"
+        android:id="@+id/exam_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="@string/current_semester"
+        android:text="@string/current_exams"
         android:textColor="@color/color_primary"
         android:textSize="19sp"
         android:textStyle="bold"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/score_list_loader"
+        android:id="@+id/exam_list_loader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,35 +28,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/score_list_refresher"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/exam_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/semester_header">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/score_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="?actionBarSize"
-            android:paddingBottom="?actionBarSize" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/receive_notification_scores"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:text="@string/nav_notifications"
-        android:textStyle="bold"
-        android:paddingStart="15dp"
-        android:paddingEnd="10dp"
-        android:background="@color/transparent_95"
-        android:textColor="@color/color_primary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/semester_header"/>
+        app:layout_constraintTop_toBottomOf="@+id/exam_header"
+        android:paddingBottom="?actionBarSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

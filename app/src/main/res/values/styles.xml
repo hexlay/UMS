@@ -14,7 +14,7 @@
         <item name="md_corner_radius">10dp</item>
     </style>
 
-    <style name="AppSplash" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppSplash" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>

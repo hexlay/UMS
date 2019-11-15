@@ -10,7 +10,7 @@ android {
         applicationId "hexlay.ums"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 8
+        versionCode 10
         versionName "${getDate('M')}${getDate('d')}"
     }
     buildTypes {
@@ -20,7 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -58,7 +58,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // Kotlin
     implementation "org.jetbrains.anko:anko:0.10.8"
-    implementation 'androidx.core:core-ktx:1.2.0-beta01'
+    implementation 'androidx.core:core-ktx:1.2.0-beta02'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // AndroidX

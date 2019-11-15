@@ -24,6 +24,7 @@ import hexlay.ums.helpers.toHtml
 import hexlay.ums.models.notifications.Notification
 import hexlay.ums.services.ConnectivityReceiver
 import hexlay.ums.services.NotificationService
+import hexlay.ums.services.ScoreService
 import hexlay.ums.services.events.NotificationRemoveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -58,10 +59,10 @@ class MainActivity : AppCompatActivity() {
         initToolbar()
         setupNavigationView()
         applyDayNight()
-        startSync()
+        startNotificationJob()
+        startScoreJob()
         checkForStarterData()
     }
-
 
     fun applyDayNight() {
         when (preferenceHelper.darkMode) {
@@ -140,9 +141,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startSync() {
+    fun startNotificationJob() {
         if (preferenceHelper.getNotifications) {
-            if (!appHelper.isSyncing) {
+            if (!appHelper.isJobScheduled(0x1)) {
                 val jobService = ComponentName(this, NotificationService::class.java)
                 val syncInfo = JobInfo.Builder(0x1, jobService)
                     .setPeriodic(14400000)
@@ -154,10 +155,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun stopSync() {
-        if (appHelper.isSyncing) {
+    fun startScoreJob() {
+        if (preferenceHelper.getNotificationsScore) {
+            if (!appHelper.isJobScheduled(0x2)) {
+                val jobService = ComponentName(this, ScoreService::class.java)
+                val syncInfo = JobInfo.Builder(0x2, jobService)
+                    .setPeriodic(14400000)
+                    .setPersisted(true)
+                    .build()
+                val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                scheduler.schedule(syncInfo)
+            }
+        }
+    }
+
+    fun stopJob(jobId: Int) {
+        if (!appHelper.isJobScheduled(jobId)) {
             val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-            scheduler.cancel(0x1)
+            scheduler.cancel(jobId)
         }
     }
 

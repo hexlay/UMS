@@ -57,9 +57,9 @@ class NotificationPageFragment : Fragment() {
             receive_notification.setOnCheckedChangeListener { _, isChecked ->
                 reference.get()!!.preferenceHelper.getNotifications = isChecked
                 if (isChecked) {
-                    reference.get()!!.startSync()
+                    reference.get()!!.startNotificationJob()
                 } else {
-                    reference.get()!!.stopSync()
+                    reference.get()!!.stopJob(0x1)
                 }
             }
         }
