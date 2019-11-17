@@ -45,15 +45,18 @@ class CalendarFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         calendarSubjectAdapter = CalendarSubjectAdapter()
         val topMargin = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(5)
         calendar_view.setMargins(top = topMargin)
+        calendar_refresher.setOnRefreshListener {
+            initSessions()
+        }
         initSessions()
     }
 
@@ -135,6 +138,7 @@ class CalendarFragment : Fragment() {
                 setupCalendar()
                 setupRecyclerView()
             }
+            calendar_refresher.isRefreshing = false
         }, {
             (reference.get()!!.application as UMS).handleError(it)
         })

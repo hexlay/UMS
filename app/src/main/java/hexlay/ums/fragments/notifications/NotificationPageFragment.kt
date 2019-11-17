@@ -37,12 +37,12 @@ class NotificationPageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         notificationFragmentType = arguments!!.getString("notification_type")!!
         disposable = CompositeDisposable()
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_notification_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         initRecyclerView()
         initNotifications()
         initEvents()
@@ -51,6 +51,7 @@ class NotificationPageFragment : Fragment() {
             initNotifications()
         }
         if (notificationFragmentType == "unread") {
+            notification_list_refresher.setProgressViewOffset(false, 0, reference.get()!!.appHelper.actionBarSize)
             notification_list.setPadding(0, reference.get()!!.appHelper.actionBarSize, 0, notification_list.paddingBottom)
             receive_notification.isVisible = true
             receive_notification.isChecked = reference.get()!!.preferenceHelper.getNotifications

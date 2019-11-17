@@ -25,14 +25,15 @@ class ScoreFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_score, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         semester_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
         score_list.layoutManager = LinearLayoutManager(context)
+        score_list_refresher.setProgressViewOffset(false, 0, reference.get()!!.appHelper.actionBarSize)
         score_list_refresher.setOnRefreshListener {
             initSubjects()
         }

@@ -47,12 +47,12 @@ class ProfileFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         semesterAdapter = SectionedRecyclerViewAdapter()
         all_semester_subjects.layoutManager = LinearLayoutManager(context)
         initEvents()

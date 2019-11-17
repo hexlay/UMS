@@ -5,6 +5,11 @@ import com.dbflow5.config.DatabaseConfig
 import com.dbflow5.config.FlowConfig
 import com.dbflow5.config.FlowManager
 import com.dbflow5.database.AndroidSQLiteOpenHelper
+import com.facebook.flipper.android.AndroidFlipperClient
+import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.flipper.plugins.inspector.DescriptorMapping
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
+import com.facebook.soloader.SoLoader
 import com.google.gson.GsonBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
 import hexlay.ums.api.AccessDeniedException
@@ -31,13 +36,19 @@ class UMS : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AndroidThreeTen.init(this)
         initAPI()
+        AndroidThreeTen.init(this)
+        SoLoader.init(this, false)
         FlowManager.init(
             FlowConfig.Builder(this)
                 .database(DatabaseConfig.builder(UmsDatabase::class, sqlLiteHelper).databaseName(UmsDatabase.NAME).build())
                 .build()
         )
+        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
+            val client = AndroidFlipperClient.getInstance(this)
+            client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
+            client.start()
+        }
     }
 
     private fun initAPI() {

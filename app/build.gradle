@@ -94,6 +94,11 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
 
+    // Flipper
+    debugImplementation 'com.facebook.flipper:flipper:0.28.0'
+    debugImplementation 'com.facebook.soloader:soloader:0.8.0'
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.28.0'
+
     // Un-categorized
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'

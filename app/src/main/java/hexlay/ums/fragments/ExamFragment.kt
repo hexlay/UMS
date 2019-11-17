@@ -25,12 +25,12 @@ class ExamFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_exams, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         exam_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
         exam_list.layoutManager = LinearLayoutManager(context)
         initExams()

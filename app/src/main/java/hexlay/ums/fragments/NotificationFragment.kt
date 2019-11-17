@@ -18,12 +18,12 @@ class NotificationFragment : Fragment() {
     private lateinit var reference: WeakReference<MainActivity>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        reference = WeakReference(activity as MainActivity)
         return inflater.inflate(R.layout.fragment_notification, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        reference = WeakReference(activity as MainActivity)
         notification_tabs.setMargins(top = reference.get()!!.appHelper.statusBarHeight)
         val adapter = ViewPagerAdapter(childFragmentManager)
         adapter.addFragment(NotificationPageFragment.newInstance("unread"), -1)
