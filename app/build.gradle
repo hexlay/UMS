@@ -10,7 +10,7 @@ android {
         applicationId "hexlay.ums"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 10
+        versionCode 11
         versionName "${getDate('M')}${getDate('d')}"
     }
     buildTypes {
@@ -25,8 +25,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = "1.8"
-        targetCompatibility = 1.8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -95,9 +95,8 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
 
     // Flipper
-    debugImplementation 'com.facebook.flipper:flipper:0.28.0'
-    debugImplementation 'com.facebook.soloader:soloader:0.8.0'
-    releaseImplementation 'com.facebook.flipper:flipper-noop:0.28.0'
+    implementation 'com.facebook.flipper:flipper:0.28.0'
+    implementation 'com.facebook.soloader:soloader:0.8.0'
 
     // Un-categorized
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'

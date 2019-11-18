@@ -7,8 +7,11 @@ import com.dbflow5.config.FlowManager
 import com.dbflow5.database.AndroidSQLiteOpenHelper
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
+import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
+import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
+import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import com.google.gson.GsonBuilder
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -47,12 +50,15 @@ class UMS : Application() {
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
             val client = AndroidFlipperClient.getInstance(this)
             client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
+            client.addPlugin(CrashReporterPlugin.getInstance())
+            client.addPlugin(DatabasesFlipperPlugin(this))
+            client.addPlugin(SharedPreferencesFlipperPlugin(this, "ums_preferences"))
             client.start()
         }
     }
 
     private fun initAPI() {
-        val cache = Cache(cacheDir, (5 * 1024 * 1024).toLong())
+        val cache = Cache(cacheDir, 5242880) // 5 * 1024 * 1024
         val client = OkHttpClient.Builder()
             .addInterceptor(ConnectionInterceptor(this))
             .addInterceptor(AddCookiesInterceptor(this))
@@ -75,11 +81,6 @@ class UMS : Application() {
             PreferenceHelper(baseContext).clearForLogout()
         }
         toast(error.message!!)
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        FlowManager.destroy()
     }
 
 }

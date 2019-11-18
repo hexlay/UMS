@@ -8,16 +8,20 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
+        android:name="hexlay.ums.UMS"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="hexlay.ums.UMS"
         android:theme="@style/AppTheme"
-        android:hasFragileUserData="true"
-        android:allowBackup="true"
-        android:fullBackupContent="true"
         tools:targetApi="q">
+
+        <activity
+            android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
+            android:exported="true" />
 
         <activity
             android:name="hexlay.ums.activites.StarterActivity"
@@ -36,15 +40,15 @@
 
         <service
             android:name="hexlay.ums.services.NotificationService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
             android:exported="true"
-            android:enabled="true" />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name="hexlay.ums.services.ScoreService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
             android:exported="true"
-            android:enabled="true" />
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
 
