@@ -24,6 +24,7 @@
 - <a href="https://github.com/afollestad/material-dialogs">Material Dialogs</a>
 - <a href="https://github.com/luizgrp/SectionedRecyclerViewAdapter">SectionedRecyclerViewAdapter</a>
 - <a href="https://github.com/greenrobot/EventBus">EventBus</a>
+- <a href="https://github.com/kizitonwose/CalendarView">CalendarView</a>
 
 # License
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
