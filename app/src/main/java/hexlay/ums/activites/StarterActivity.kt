@@ -56,6 +56,7 @@ class StarterActivity : AppCompatActivity() {
                             }
                             auth_loading.isVisible = false
                         }, {
+                            auth_loading.isVisible = false
                             (application as UMS).handleError(it)
                         })
                     }

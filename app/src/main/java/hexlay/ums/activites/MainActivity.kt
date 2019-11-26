@@ -25,12 +25,15 @@ import hexlay.ums.models.notifications.Notification
 import hexlay.ums.services.ConnectivityReceiver
 import hexlay.ums.services.NotificationService
 import hexlay.ums.services.ScoreService
+import hexlay.ums.services.events.Event
+import hexlay.ums.services.events.LogoutEvent
 import hexlay.ums.services.events.NotificationRemoveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.noAnimation
 
@@ -46,14 +49,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        disposable = CompositeDisposable()
         setContentView(R.layout.activity_main)
+        disposable = CompositeDisposable()
+        appHelper = AppHelper(baseContext)
+        preferenceHelper = PreferenceHelper(baseContext)
         init()
     }
 
     private fun init() {
-        appHelper = AppHelper(baseContext)
-        preferenceHelper = PreferenceHelper(baseContext)
         makeFullscreen()
         registerConReceiver()
         initToolbar()
@@ -62,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         startNotificationJob()
         startScoreJob()
         checkForStarterData()
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
     }
 
     fun applyDayNight() {
@@ -115,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         view_pager.offscreenPageLimit = 3
     }
 
-    fun exitMainActivity() {
+    private fun exitMainActivity() {
         startActivity(intentFor<StarterActivity>().noAnimation())
         finish()
     }
@@ -192,10 +198,28 @@ class MainActivity : AppCompatActivity() {
         decorView.systemUiVisibility = flags
     }
 
+    @Subscribe
+    fun onEvent(event: Event) {
+        when (event) {
+            is LogoutEvent -> {
+                exitMainActivity()
+            }
+        }
+    }
+
     override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
         unregisterReceiver(connectivityReceiver)
         disposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        if (view_pager.currentItem != 0) {
+            view_pager.currentItem = 0
+        } else {
+            super.onBackPressed()
+        }
     }
 
 }

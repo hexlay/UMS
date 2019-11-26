@@ -27,6 +27,7 @@ import hexlay.ums.models.Profile
 import hexlay.ums.services.events.ConnectedSuccessEvent
 import hexlay.ums.services.events.ConnectedUnSuccessEvent
 import hexlay.ums.services.events.Event
+import hexlay.ums.services.events.LogoutEvent
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -130,7 +131,7 @@ class ProfileFragment : Fragment() {
                             profile.delete()
                         }
                         PreferenceHelper(context).clearForLogout()
-                        reference.get()!!.exitMainActivity()
+                        EventBus.getDefault().post(LogoutEvent())
                     }, {
                         (reference.get()!!.application as UMS).handleError(it)
                     })
@@ -160,6 +161,7 @@ class ProfileFragment : Fragment() {
                                 profile_change_loading.isVisible = false
                                 dialog.dismiss()
                             }, {
+                                profile_change_loading.isVisible = false
                                 (reference.get()!!.application as UMS).handleError(it)
                             })
                         }

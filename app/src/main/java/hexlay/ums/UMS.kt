@@ -23,8 +23,10 @@ import hexlay.ums.api.interceptors.ConnectionInterceptor
 import hexlay.ums.api.interceptors.ReceivedCookiesInterceptor
 import hexlay.ums.database.UmsDatabase
 import hexlay.ums.helpers.PreferenceHelper
+import hexlay.ums.services.events.LogoutEvent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.toast
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -79,6 +81,7 @@ class UMS : Application() {
     fun handleError(error: Throwable) {
         if (error is AccessDeniedException || error is UnauthorizedException) {
             PreferenceHelper(baseContext).clearForLogout()
+            EventBus.getDefault().post(LogoutEvent())
         }
         toast(error.message!!)
     }
