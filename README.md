@@ -1,7 +1,9 @@
 # Sangu's UMS [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8874890f43a14537b56a207298825fe1)](https://www.codacy.com/manual/hexlay/UMS?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hexlay/UMS&amp;utm_campaign=Badge_Grade)
-<a href="https://play.google.com/store/apps/details?id=hexlay.ums" target="_blank">
+<!--<a href="https://play.google.com/store/apps/details?id=hexlay.ums" target="_blank">
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200" height="80">
-</a>
+</a>-->
+
+<b>Probably deprecated. Auth API restricted.</b>
 
 აპლიკაციით შეგიძლიათ:
 - ნახოთ მიმდინარე ქულები
