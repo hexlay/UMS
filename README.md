@@ -3,7 +3,7 @@
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200" height="80">
 </a>-->
 
-<b>Probably deprecated. Auth API restricted.</b>
+<b>Deprecated. API restricted.</b>
 
 აპლიკაციით შეგიძლიათ:
 - ნახოთ მიმდინარე ქულები
