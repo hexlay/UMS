@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity() {
         private set
     lateinit var preferenceHelper: PreferenceHelper
         private set
-    private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private lateinit var connectivityReceiver: ConnectivityReceiver
-    private lateinit var disposable: CompositeDisposable
+    private var viewPagerAdapter: ViewPagerAdapter? = null
+    private var connectivityReceiver: ConnectivityReceiver? = null
+    private var disposable: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,18 +81,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager() {
         viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(ScoreFragment(), R.id.nav_scores)
-        viewPagerAdapter.addFragment(CalendarFragment(), R.id.nav_calendar)
-        viewPagerAdapter.addFragment(ExamFragment(), R.id.nav_exams)
-        viewPagerAdapter.addFragment(NotificationFragment(), R.id.nav_notifications)
-        viewPagerAdapter.addFragment(ProfileFragment(), R.id.nav_profile)
+        viewPagerAdapter?.addFragment(ScoreFragment(), R.id.nav_scores)
+        viewPagerAdapter?.addFragment(CalendarFragment(), R.id.nav_calendar)
+        viewPagerAdapter?.addFragment(ExamFragment(), R.id.nav_exams)
+        viewPagerAdapter?.addFragment(NotificationFragment(), R.id.nav_notifications)
+        viewPagerAdapter?.addFragment(ProfileFragment(), R.id.nav_profile)
         view_pager.adapter = viewPagerAdapter
         view_pager.offscreenPageLimit = 4
         view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                navigation.selectedItemId = viewPagerAdapter.getFragmentId(position)
+                navigation.selectedItemId = viewPagerAdapter?.getFragmentId(position)!!
                 toolbar_overlay.isVisible = position == 1
             }
 
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationView() {
         navigation.setOnNavigationItemSelectedListener { item ->
-            view_pager.currentItem = viewPagerAdapter.getPositionById(item.itemId)
+            view_pager.currentItem = viewPagerAdapter?.getPositionById(item.itemId)!!
             true
         }
     }
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         if (view_pager.currentItem == 2) {
             view_pager.currentItem = 0
         }
-        viewPagerAdapter.removeFragment(2)
+        viewPagerAdapter?.removeFragment(2)
         navigation.menu.removeItem(R.id.nav_exams)
         view_pager.offscreenPageLimit = 3
     }
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                     }, { throwable ->
                         (application as UMS).handleError(throwable)
                     })
-                    disposable.add(method)
+                    disposable?.add(method)
                 }
             }
         }
@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         unregisterReceiver(connectivityReceiver)
-        disposable.dispose()
+        disposable?.dispose()
         super.onDestroy()
     }
 

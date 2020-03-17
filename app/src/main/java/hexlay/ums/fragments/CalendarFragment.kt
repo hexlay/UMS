@@ -30,14 +30,13 @@ import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
-import java.lang.ref.WeakReference
 
 class CalendarFragment : Fragment() {
 
-    private lateinit var reference: WeakReference<MainActivity>
-    private lateinit var calendarSubjectAdapter: CalendarSubjectAdapter
-    private lateinit var savedSessions: List<Session>
-    private lateinit var disposable: CompositeDisposable
+    private var reference: MainActivity? = null
+    private var calendarSubjectAdapter: CalendarSubjectAdapter? = null
+    private var savedSessions: List<Session>? = null
+    private var disposable: CompositeDisposable? = null
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
@@ -45,14 +44,14 @@ class CalendarFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
-        reference = WeakReference(activity as MainActivity)
+        reference = activity as MainActivity
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         calendarSubjectAdapter = CalendarSubjectAdapter()
-        val topMargin = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(5)
+        val topMargin = reference?.appHelper?.statusBarHeight!! + reference?.appHelper?.dpOf(5)!!
         calendar_view.setMargins(top = topMargin)
         calendar_refresher.setOnRefreshListener {
             initSessions()
@@ -94,9 +93,11 @@ class CalendarFragment : Fragment() {
                             container.dotView.isVisible = false
                         }
                         else -> {
-                            val currentSubjects = savedSessions.filter { it.dayOfWeek == day.date.dayOfWeek.value }.toList()
-                            container.dayText.background = null
-                            container.dotView.isVisible = currentSubjects.isNotEmpty()
+                            val currentSubjects = savedSessions?.filter { it.dayOfWeek == day.date.dayOfWeek.value }?.toList()
+                            currentSubjects?.let {
+                                container.dayText.background = null
+                                container.dotView.isVisible = it.isNotEmpty()
+                            }
                         }
                     }
                 } else {
@@ -118,20 +119,22 @@ class CalendarFragment : Fragment() {
             oldDate?.let { calendar_view.notifyDateChanged(it) }
             calendar_view.notifyDateChanged(date)
             selected_date.text = selectionFormatter.format(date)
-            val currentSubjects = savedSessions.filter { it.dayOfWeek == date.dayOfWeek.value }.toList()
-            calendarSubjectAdapter.changeSubjects(currentSubjects)
-            if (currentSubjects.isEmpty()) {
-                calendar_dnd.isGone = false
-                subject_view.isGone = true
-            } else {
-                calendar_dnd.isGone = true
-                subject_view.isGone = false
+            val currentSubjects = savedSessions?.filter { it.dayOfWeek == date.dayOfWeek.value }?.toList()
+            currentSubjects?.let {
+                calendarSubjectAdapter?.changeSubjects(it)
+                if (it.isEmpty()) {
+                    calendar_dnd.isGone = false
+                    subject_view.isGone = true
+                } else {
+                    calendar_dnd.isGone = true
+                    subject_view.isGone = false
+                }
             }
         }
     }
 
     private fun initSessions() {
-        val method = (reference.get()!!.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference?.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
                 savedSessions = it
                 setContainers()
@@ -140,13 +143,13 @@ class CalendarFragment : Fragment() {
             }
             calendar_refresher.isRefreshing = false
         }, {
-            (reference.get()!!.application as UMS).handleError(it)
+            (reference?.application as UMS).handleError(it)
         })
-        disposable.add(method)
+        disposable?.add(method)
     }
 
     override fun onDestroyView() {
-        disposable.dispose()
+        disposable?.dispose()
         super.onDestroyView()
     }
 

@@ -16,42 +16,41 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_exams.*
-import java.lang.ref.WeakReference
 
 class ExamFragment : Fragment() {
 
-    private lateinit var reference: WeakReference<MainActivity>
-    private lateinit var disposable: CompositeDisposable
+    private var reference: MainActivity? = null
+    private var disposable: CompositeDisposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
-        reference = WeakReference(activity as MainActivity)
+        reference = activity as MainActivity
         return inflater.inflate(R.layout.fragment_exams, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        exam_header.setMargins(top = reference.get()!!.appHelper.statusBarHeight + reference.get()!!.appHelper.dpOf(10))
+        exam_header.setMargins(top = reference?.appHelper?.statusBarHeight!! + reference?.appHelper?.dpOf(10)!!)
         exam_list.layoutManager = LinearLayoutManager(context)
         initExams()
     }
 
     private fun initExams() {
-        val method = (reference.get()!!.application as UMS).umsAPI.getStudentExams().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        val method = (reference?.application as UMS).umsAPI.getStudentExams().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
             if (it.isNotEmpty()) {
                 exam_list_loader.isGone = true
                 exam_list.adapter = ExamAdapter(it)
             } else {
-                reference.get()!!.disableExams()
+                reference?.disableExams()
             }
         }, {
-            (reference.get()!!.application as UMS).handleError(it)
+            (reference?.application as UMS).handleError(it)
         })
-        disposable.add(method)
+        disposable?.add(method)
     }
 
     override fun onDestroyView() {
-        disposable.dispose()
+        disposable?.dispose()
         super.onDestroyView()
     }
 

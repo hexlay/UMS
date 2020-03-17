@@ -11,20 +11,19 @@ import hexlay.ums.adapters.ViewPagerAdapter
 import hexlay.ums.fragments.notifications.NotificationPageFragment
 import hexlay.ums.helpers.setMargins
 import kotlinx.android.synthetic.main.fragment_notification.*
-import java.lang.ref.WeakReference
 
 class NotificationFragment : Fragment() {
 
-    private lateinit var reference: WeakReference<MainActivity>
+    private var reference: MainActivity? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        reference = WeakReference(activity as MainActivity)
+        reference = activity as MainActivity
         return inflater.inflate(R.layout.fragment_notification, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        notification_tabs.setMargins(top = reference.get()!!.appHelper.statusBarHeight)
+        notification_tabs.setMargins(top = reference?.appHelper?.statusBarHeight)
         val adapter = ViewPagerAdapter(childFragmentManager)
         adapter.addFragment(NotificationPageFragment.newInstance("unread"), -1)
         adapter.addFragment(NotificationPageFragment.newInstance("read"), -1)

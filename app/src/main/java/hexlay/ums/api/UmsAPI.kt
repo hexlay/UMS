@@ -40,7 +40,7 @@ interface UmsAPI {
     @GET("notification/received")
     fun getNotifications(
         @Query("state")
-        state: String = "unread",
+        state: String? = "unread",
         @Query("limit")
         limit: String = "20",
         @Query("page")
@@ -69,7 +69,7 @@ interface UmsAPI {
         @Path("id")
         id: String,
         @Field("state")
-        state: String = "read"
+        state: String? = "read"
     ): Observable<Response<Void>>
 
     @POST("auth/logout")

@@ -19,7 +19,7 @@ import org.jetbrains.anko.toast
 
 class StarterActivity : AppCompatActivity() {
 
-    private lateinit var preferenceHelper: PreferenceHelper
+    private var preferenceHelper: PreferenceHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class StarterActivity : AppCompatActivity() {
     }
 
     private fun checkLoggedIn() {
-        if (preferenceHelper.connectId != "") {
+        if (preferenceHelper?.connectId != "") {
             startMainActivity()
         } else {
             val dialog = MaterialDialog(this).customView(R.layout.layout_auth)
@@ -48,7 +48,7 @@ class StarterActivity : AppCompatActivity() {
                         (application as UMS).umsAPI.login(emailText, passwordText).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
                             if (it != null) {
                                 it.insert()
-                                preferenceHelper.passwordHash = passwordText.md5()
+                                preferenceHelper?.passwordHash = passwordText.md5()
                                 dialog.dismiss()
                                 startMainActivity()
                             } else {
