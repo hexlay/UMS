@@ -51,11 +51,6 @@ class ViewPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager,
     fun addFragment(fragment: Fragment, id: Int) {
         fragmentList.add(fragment)
         fragmentIdList.add(id)
-    }
-
-    fun removeFragment(index: Int) {
-        fragmentList.removeAt(index)
-        fragmentIdList.removeAt(index)
         notifyDataSetChanged()
     }
 

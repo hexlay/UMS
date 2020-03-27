@@ -14,17 +14,13 @@ import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import hexlay.ums.R
-import hexlay.ums.UMS
-import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.CalendarSubjectAdapter
-import hexlay.ums.helpers.setMargins
-import hexlay.ums.helpers.setTextColorRes
+import hexlay.ums.api.Api
+import hexlay.ums.helpers.*
 import hexlay.ums.models.session.Session
 import hexlay.ums.views.DayViewContainer
 import hexlay.ums.views.MonthViewContainer
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
@@ -33,7 +29,6 @@ import org.threeten.bp.format.DateTimeFormatter
 
 class CalendarFragment : Fragment() {
 
-    private var reference: MainActivity? = null
     private var calendarSubjectAdapter: CalendarSubjectAdapter? = null
     private var savedSessions: List<Session>? = null
     private var disposable: CompositeDisposable? = null
@@ -44,14 +39,13 @@ class CalendarFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
-        reference = activity as MainActivity
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         calendarSubjectAdapter = CalendarSubjectAdapter()
-        val topMargin = reference?.appHelper?.statusBarHeight!! + reference?.appHelper?.dpOf(5)!!
+        val topMargin = getStatusBarHeight() + dpOf(5)
         calendar_view.setMargins(top = topMargin)
         calendar_refresher.setOnRefreshListener {
             initSessions()
@@ -134,7 +128,7 @@ class CalendarFragment : Fragment() {
     }
 
     private fun initSessions() {
-        val method = (reference?.application as UMS).umsAPI.getStudentSessions().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        disposable?.add(Api.make(requireContext()).getStudentSessions().observe {
             if (it.isNotEmpty()) {
                 savedSessions = it
                 setContainers()
@@ -142,10 +136,7 @@ class CalendarFragment : Fragment() {
                 setupRecyclerView()
             }
             calendar_refresher.isRefreshing = false
-        }, {
-            (reference?.application as UMS).handleError(it)
         })
-        disposable?.add(method)
     }
 
     override fun onDestroyView() {

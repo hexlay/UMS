@@ -52,7 +52,7 @@ static def getDate(String format) {
 }
 
 def dbFlowVersion = '5.0.0-alpha1'
-def retrofitVersion = '2.6.2'
+def retrofitVersion = '2.8.1'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -81,7 +81,7 @@ dependencies {
     implementation "com.github.agrosner.dbflow:contentprovider:$dbFlowVersion"
 
     // Retrofit
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
@@ -91,16 +91,12 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    kapt 'com.github.bumptech.glide:compiler:4.10.0'
-
-    // Flipper
-    implementation 'com.facebook.flipper:flipper:0.28.0'
-    implementation 'com.facebook.soloader:soloader:0.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Un-categorized
     implementation 'com.github.kizitonwose:CalendarView:0.2.8'
     implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'
-    implementation 'de.hdodenhof:circleimageview:3.0.1'
-    implementation "org.greenrobot:eventbus:3.1.1"
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }

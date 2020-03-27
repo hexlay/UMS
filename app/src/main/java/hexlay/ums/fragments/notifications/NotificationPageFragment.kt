@@ -12,19 +12,20 @@ import hexlay.ums.R
 import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.NotificationAdapter
+import hexlay.ums.api.Api
+import hexlay.ums.helpers.getActionBarSize
+import hexlay.ums.helpers.observe
 import hexlay.ums.models.notifications.NotificationBase
 import hexlay.ums.services.events.Event
 import hexlay.ums.services.events.NotificationRemoveEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_notification_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 class NotificationPageFragment : Fragment() {
 
-    private var reference: MainActivity? = null
+    private lateinit var activity: MainActivity
     private var notificationAdapter: NotificationAdapter? = null
     private var notificationFragmentType: String? = null
     private var disposable: CompositeDisposable? = null
@@ -36,7 +37,7 @@ class NotificationPageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         notificationFragmentType = arguments?.getString("notification_type")
         disposable = CompositeDisposable()
-        reference = activity as MainActivity
+        activity = requireActivity() as MainActivity
         return inflater.inflate(R.layout.fragment_notification_list, container, false)
     }
 
@@ -50,16 +51,16 @@ class NotificationPageFragment : Fragment() {
             initNotifications()
         }
         if (notificationFragmentType == "unread") {
-            notification_list_refresher.setProgressViewOffset(false, 0, reference?.appHelper?.actionBarSize!!)
-            notification_list.setPadding(0, reference?.appHelper?.actionBarSize!!, 0, notification_list.paddingBottom)
+            notification_list_refresher.setProgressViewOffset(false, 0, getActionBarSize())
+            notification_list.setPadding(0, getActionBarSize(), 0, notification_list.paddingBottom)
             receive_notification.isVisible = true
-            receive_notification.isChecked = reference?.preferenceHelper?.getNotifications!!
+            receive_notification.isChecked = activity.preferenceHelper.getNotifications
             receive_notification.setOnCheckedChangeListener { _, isChecked ->
-                reference?.preferenceHelper?.getNotifications = isChecked
+                activity.preferenceHelper.getNotifications = isChecked
                 if (isChecked) {
-                    reference?.startNotificationJob()
+                    activity.startNotificationJob()
                 } else {
-                    reference?.stopJob(0x1)
+                    activity.stopJob(0x1)
                 }
             }
         }
@@ -73,7 +74,7 @@ class NotificationPageFragment : Fragment() {
 
     private fun initRecyclerView() {
         val layoutManager = GridLayoutManager(context, 1)
-        notificationAdapter = NotificationAdapter(reference?.application as UMS)
+        notificationAdapter = NotificationAdapter(requireContext())
         notification_list.layoutManager = layoutManager
         notification_list.adapter = notificationAdapter
         notification_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -101,15 +102,10 @@ class NotificationPageFragment : Fragment() {
     }
 
     private fun initNotifications() {
-        val method = (reference?.application as UMS).umsAPI.getNotifications(page = page.toString(), state = notificationFragmentType).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
-            if (it != null) {
-                handleData(it)
-            }
+        disposable?.add(Api.make(requireContext()).getNotifications(page = page.toString(), state = notificationFragmentType).observe {
+            handleData(it)
             notification_list_refresher.isRefreshing = false
-        }, {
-            (reference?.application as UMS).handleError(it)
         })
-        disposable?.add(method)
     }
 
     private fun handleData(data: NotificationBase) {

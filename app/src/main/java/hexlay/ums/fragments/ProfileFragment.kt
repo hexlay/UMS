@@ -2,6 +2,7 @@ package hexlay.ums.fragments
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +19,9 @@ import com.dbflow5.query.select
 import com.dbflow5.structure.delete
 import com.dbflow5.structure.exists
 import hexlay.ums.R
-import hexlay.ums.UMS
 import hexlay.ums.activites.MainActivity
 import hexlay.ums.adapters.sections.SemesterSection
+import hexlay.ums.api.Api
 import hexlay.ums.api.UmsAPI
 import hexlay.ums.helpers.*
 import hexlay.ums.models.Profile
@@ -29,25 +30,26 @@ import hexlay.ums.services.events.ConnectedUnSuccessEvent
 import hexlay.ums.services.events.Event
 import hexlay.ums.services.events.LogoutEvent
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.layout_change_profile.*
 import kotlinx.android.synthetic.main.layout_profile_totals.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.support.v4.toast
 
 class ProfileFragment : Fragment() {
 
-    private var reference: MainActivity? = null
+    private lateinit var activity: MainActivity
     private var semesterAdapter: SectionedRecyclerViewAdapter? = null
     private var disposable: CompositeDisposable? = null
+    private lateinit var api: UmsAPI
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         disposable = CompositeDisposable()
-        reference = activity as MainActivity
+        activity = requireActivity() as MainActivity
+        api = Api.make(requireContext())
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
@@ -68,7 +70,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initSubjects() {
-        val method = (reference?.application as UMS).umsAPI.getTotalStudentSubjects().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+        disposable?.add(api.getTotalStudentSubjects().observe {
             if (it.isNotEmpty()) {
                 all_semester_subjects_loader.isGone = true
                 val creditsSum = it.filter { sItSem -> sItSem.semesterState == "passed" }.sumBy { sItCred -> sItCred.credit }
@@ -81,16 +83,13 @@ class ProfileFragment : Fragment() {
                 all_semester_subjects.adapter = semesterAdapter
                 initPreviousCourseSubjects()
             }
-        }, {
-            (reference?.application as UMS).handleError(it)
         })
-        method?.let { disposable?.add(it) }
     }
 
     private fun initPreviousCourseSubjects() {
         val profile = (select from Profile::class).result
         if (profile?.id != null) {
-            val method = (reference?.application as UMS).umsAPI.getTotalStudentSubjectsPrevijous(profile.id!!).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+            disposable?.add(api.getTotalStudentSubjectsPrevijous(profile.id!!).observe {
                 if (it.isNotEmpty()) {
                     val subjectMap = it.sortedWith(compareByDescending { sIt -> sIt.semester }).groupBy { gIt -> gIt.semester }
                     for ((key, value) in subjectMap) {
@@ -99,23 +98,20 @@ class ProfileFragment : Fragment() {
                     }
                     semesterAdapter?.notifyDataSetChanged()
                 }
-            }, {
-                (reference?.application as UMS).handleError(it)
             })
-            disposable?.add(method)
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun initProfile() {
         val profile = (select from Profile::class).result
-        profile?.let {
-            profile_name.text = "${it.firstName} ${it.lastName}"
-            profile_status.text = it.email
-            it.photoUrl?.let {
+        profile?.let { profileResult ->
+            profile_name.text = "${profileResult.firstName} ${profileResult.lastName}"
+            profile_status.text = profileResult.email
+            profileResult.photoUrl?.let {
                 profile_image.setUrl(UmsAPI.BASE_URL + it)
             }
-            if (it.gender == "male") {
+            if (profileResult.gender == "male") {
                 profile_image.borderColor = Color.RED
             } else {
                 profile_image.borderColor = Color.MAGENTA
@@ -125,14 +121,12 @@ class ProfileFragment : Fragment() {
             MaterialDialog(context!!).show {
                 message(R.string.profile_logout_prompt)
                 positiveButton(R.string.yes) {
-                    (reference?.application as UMS).umsAPI.logout().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                    disposable?.add(api.logout().observe {
                         if (profile != null && profile.exists()) {
                             profile.delete()
                         }
                         PreferenceHelper(context).clearForLogout()
                         EventBus.getDefault().post(LogoutEvent())
-                    }, {
-                        (reference?.application as UMS).handleError(it)
                     })
                 }
                 negativeButton(R.string.no) {}
@@ -151,17 +145,14 @@ class ProfileFragment : Fragment() {
                             current_password_input.error = resources.getString(R.string.auth_empty)
                             new_password_input.error = resources.getString(R.string.auth_empty)
                         }
-                        oldPasswordText.md5() != reference?.preferenceHelper?.passwordHash -> current_password_input.error = resources.getString(R.string.profile_change_password_error)
+                        oldPasswordText.md5() != activity.preferenceHelper.passwordHash -> current_password_input.error = resources.getString(R.string.profile_change_password_error)
                         else -> {
                             profile_change_loading.isVisible = true
-                            (reference?.application as UMS).umsAPI.passwordChange(newPasswordText).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
-                                reference?.preferenceHelper?.passwordHash = newPasswordText.md5()
+                            disposable?.add(api.passwordChange(newPasswordText).observe {
+                                activity.preferenceHelper.passwordHash = newPasswordText.md5()
                                 toast(R.string.profile_change_success)
                                 profile_change_loading.isVisible = false
                                 dialog.dismiss()
-                            }, {
-                                profile_change_loading.isVisible = false
-                                (reference?.application as UMS).handleError(it)
                             })
                         }
                     }
@@ -170,33 +161,34 @@ class ProfileFragment : Fragment() {
         }
         dark_mode.setOnClickListener {
             val darkModeItems = mutableListOf("Just white", "Blackish", "Follow system")
-            if (!AppHelper.isPie) {
+            if (!Constants.isPie) {
                 darkModeItems.removeAt(2)
             }
             MaterialDialog(context!!).show {
                 title(R.string.profile_change_theme_title)
-                listItemsSingleChoice(items = darkModeItems, initialSelection = reference?.preferenceHelper?.darkMode!!) { _, index, _ ->
-                    reference?.preferenceHelper?.darkMode = index
-                    reference?.applyDayNight()
+                listItemsSingleChoice(items = darkModeItems, initialSelection = activity.preferenceHelper.darkMode) { _, index, _ ->
+                    activity.preferenceHelper.darkMode = index
+                    activity.applyDayNight()
                 }
             }
         }
-        if (!reference?.appHelper?.isNetworkAvailable()!!) {
+        if (!isNetworkAvailable()) {
             edit_profile.hide()
             logout.hide()
         }
     }
 
+    private fun isNetworkAvailable(): Boolean {
+        val network = requireContext().connectivityManager.activeNetwork
+        val capabilities = requireContext().connectivityManager.getNetworkCapabilities(network)
+        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
+    }
+
     private fun initTotals() {
-        val method = (reference?.application as UMS).umsAPI.getStudentTotals().observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
-            if (it != null) {
-                total_progress_holder.addView(generateTotalsView(it.currentAverage, 100))
-                total_progress_holder.addView(generateTotalsView(it.currentGpa, 4))
-            }
-        }, {
-            (reference?.application as UMS).handleError(it)
+        disposable?.add(api.getStudentTotals().observe {
+            total_progress_holder.addView(generateTotalsView(it.currentAverage, 100))
+            total_progress_holder.addView(generateTotalsView(it.currentGpa, 4))
         })
-        disposable?.add(method)
     }
 
     @SuppressLint("InflateParams")

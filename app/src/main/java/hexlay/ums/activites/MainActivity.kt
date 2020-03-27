@@ -14,13 +14,12 @@ import androidx.viewpager.widget.ViewPager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import hexlay.ums.R
-import hexlay.ums.UMS
 import hexlay.ums.adapters.ViewPagerAdapter
+import hexlay.ums.api.AccessDeniedException
+import hexlay.ums.api.Api
+import hexlay.ums.api.UnauthorizedException
 import hexlay.ums.fragments.*
-import hexlay.ums.helpers.AppHelper
-import hexlay.ums.helpers.PreferenceHelper
-import hexlay.ums.helpers.setSize
-import hexlay.ums.helpers.toHtml
+import hexlay.ums.helpers.*
 import hexlay.ums.models.notifications.Notification
 import hexlay.ums.services.ConnectivityReceiver
 import hexlay.ums.services.NotificationService
@@ -28,22 +27,20 @@ import hexlay.ums.services.ScoreService
 import hexlay.ums.services.events.Event
 import hexlay.ums.services.events.LogoutEvent
 import hexlay.ums.services.events.NotificationRemoveEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hexlay.ums.services.events.SubscriptionError
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.noAnimation
+import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var appHelper: AppHelper
-        private set
     lateinit var preferenceHelper: PreferenceHelper
         private set
-    private var viewPagerAdapter: ViewPagerAdapter? = null
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var disposable: CompositeDisposable? = null
 
@@ -51,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         disposable = CompositeDisposable()
-        appHelper = AppHelper(baseContext)
         preferenceHelper = PreferenceHelper(baseContext)
         init()
     }
@@ -81,18 +77,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager() {
         viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter?.addFragment(ScoreFragment(), R.id.nav_scores)
-        viewPagerAdapter?.addFragment(CalendarFragment(), R.id.nav_calendar)
-        viewPagerAdapter?.addFragment(ExamFragment(), R.id.nav_exams)
-        viewPagerAdapter?.addFragment(NotificationFragment(), R.id.nav_notifications)
-        viewPagerAdapter?.addFragment(ProfileFragment(), R.id.nav_profile)
+        viewPagerAdapter.addFragment(ScoreFragment(), R.id.nav_scores)
+        viewPagerAdapter.addFragment(CalendarFragment(), R.id.nav_calendar)
+        viewPagerAdapter.addFragment(NotificationFragment(), R.id.nav_notifications)
+        viewPagerAdapter.addFragment(ProfileFragment(), R.id.nav_profile)
+        disposable?.add(Api.make(baseContext).getStudentExams().observe {
+            if (it.isNotEmpty()) {
+                viewPagerAdapter.addFragment(ExamFragment(), R.id.nav_exams)
+                navigation.menu.findItem(R.id.nav_exams).isVisible = true
+                view_pager.offscreenPageLimit = 4
+            }
+        })
         view_pager.adapter = viewPagerAdapter
-        view_pager.offscreenPageLimit = 4
+        view_pager.offscreenPageLimit = 3
         view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                navigation.selectedItemId = viewPagerAdapter?.getFragmentId(position)!!
+                navigation.selectedItemId = viewPagerAdapter.getFragmentId(position)
                 toolbar_overlay.isVisible = position == 1
             }
 
@@ -102,23 +104,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationView() {
         navigation.setOnNavigationItemSelectedListener { item ->
-            view_pager.currentItem = viewPagerAdapter?.getPositionById(item.itemId)!!
+            view_pager.currentItem = viewPagerAdapter.getPositionById(item.itemId)
             true
         }
     }
 
     private fun initToolbar() {
         setupViewPager()
-        toolbar_overlay.setSize(height = appHelper.statusBarHeight + appHelper.actionBarSize)
-    }
-
-    fun disableExams() {
-        if (view_pager.currentItem == 2) {
-            view_pager.currentItem = 0
-        }
-        viewPagerAdapter?.removeFragment(2)
-        navigation.menu.removeItem(R.id.nav_exams)
-        view_pager.offscreenPageLimit = 3
+        toolbar_overlay.setSize(height = getStatusBarHeight() + getActionBarSize())
     }
 
     private fun exitMainActivity() {
@@ -136,12 +129,9 @@ class MainActivity : AppCompatActivity() {
                     message(text = notification.data.text.toHtml())
                 }
                 if (notification.state == "unread") {
-                    val method = (application as UMS).umsAPI.markNotification(id = notification.id).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                    disposable?.add(Api.make(this).markNotification(id = notification.id).observe {
                         EventBus.getDefault().post(NotificationRemoveEvent(notification))
-                    }, { throwable ->
-                        (application as UMS).handleError(throwable)
                     })
-                    disposable?.add(method)
                 }
             }
         }
@@ -149,7 +139,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startNotificationJob() {
         if (preferenceHelper.getNotifications) {
-            if (!appHelper.isJobScheduled(0x1)) {
+            if (!isJobScheduled(0x1)) {
                 val jobService = ComponentName(this, NotificationService::class.java)
                 val syncInfo = JobInfo.Builder(0x1, jobService)
                     .setPeriodic(14400000)
@@ -163,7 +153,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startScoreJob() {
         if (preferenceHelper.getNotificationsScore) {
-            if (!appHelper.isJobScheduled(0x2)) {
+            if (!isJobScheduled(0x2)) {
                 val jobService = ComponentName(this, ScoreService::class.java)
                 val syncInfo = JobInfo.Builder(0x2, jobService)
                     .setPeriodic(14400000)
@@ -176,9 +166,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun stopJob(jobId: Int) {
-        if (!appHelper.isJobScheduled(jobId)) {
+        if (!isJobScheduled(jobId)) {
             val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             scheduler.cancel(jobId)
+        }
+    }
+
+    private fun isJobScheduled(jobId: Int): Boolean {
+        val scheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        if (Constants.isNougat) {
+            return scheduler.getPendingJob(jobId) != null
+        } else {
+            for (jobInfo in scheduler.allPendingJobs) {
+                if (jobInfo.id == jobId) {
+                    return true
+                }
+            }
+            return false
         }
     }
 
@@ -203,6 +207,13 @@ class MainActivity : AppCompatActivity() {
         when (event) {
             is LogoutEvent -> {
                 exitMainActivity()
+            }
+            is SubscriptionError -> {
+                if (event.throwable is AccessDeniedException || event.throwable is UnauthorizedException) {
+                    preferenceHelper.clearForLogout()
+                    EventBus.getDefault().post(LogoutEvent())
+                }
+                toast(event.throwable.message!!)
             }
         }
     }

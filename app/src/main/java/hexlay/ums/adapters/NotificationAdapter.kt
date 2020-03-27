@@ -1,5 +1,6 @@
 package hexlay.ums.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import hexlay.ums.R
-import hexlay.ums.UMS
+import hexlay.ums.api.Api
+import hexlay.ums.helpers.observe
 import hexlay.ums.helpers.toHtml
 import hexlay.ums.models.notifications.Notification
 import hexlay.ums.models.notifications.NotificationData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.internal.schedulers.IoScheduler
 import kotlinx.android.extensions.LayoutContainer
-import java.lang.ref.WeakReference
 
-class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<NotificationAdapter.RViewHolder>() {
+class NotificationAdapter(private val context: Context) : RecyclerView.Adapter<NotificationAdapter.RViewHolder>() {
 
-    private var reference: WeakReference<UMS> = WeakReference(application)
     private val notifications = ArrayList<Notification>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RViewHolder {
@@ -49,12 +47,10 @@ class NotificationAdapter(val application: UMS) : RecyclerView.Adapter<Notificat
                     message(text = notification.data.text.toHtml())
                 }
                 if (notification.state == "unread") {
-                    reference.get()!!.umsAPI.markNotification(id = notification.id).observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe({
+                    Api.make(context).markNotification(id = notification.id).observe {
                         notifications.removeAt(adapterPosition)
                         notifyItemRemoved(adapterPosition)
-                    }, { throwable ->
-                        reference.get()!!.handleError(throwable)
-                    })
+                    }
                 }
             }
         }

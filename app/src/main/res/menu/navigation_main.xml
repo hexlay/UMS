@@ -11,11 +11,6 @@
         android:title="@string/nav_calendar" />
 
     <item
-        android:id="@+id/nav_exams"
-        android:icon="@drawable/ic_exams"
-        android:title="@string/nav_exams" />
-
-    <item
         android:id="@+id/nav_notifications"
         android:icon="@drawable/ic_notifications"
         android:title="@string/nav_notifications" />
@@ -24,5 +19,11 @@
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"
         android:title="@string/nav_profile" />
+
+    <item
+        android:id="@+id/nav_exams"
+        android:visible="false"
+        android:icon="@drawable/ic_exams"
+        android:title="@string/nav_exams" />
 
 </menu>
